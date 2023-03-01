@@ -19,6 +19,7 @@ public struct AboutView<IconImage>: View
     private let termsURL: URL?
     private let tutorialURL: URL?
     private let copyright: String?
+    private let plea: String
     private let iconImage: () -> IconImage
 
     public init(shortAppName: String,
@@ -27,6 +28,7 @@ public struct AboutView<IconImage>: View
                 termsURL: URL?,
                 tutorialURL: URL?,
                 copyright: String?,
+                plea: String,
                 iconImage: @escaping () -> IconImage)
     {
         self.shortAppName = shortAppName
@@ -35,6 +37,7 @@ public struct AboutView<IconImage>: View
         self.termsURL = termsURL
         self.tutorialURL = tutorialURL
         self.copyright = copyright
+        self.plea = plea
         self.iconImage = iconImage
     }
 
@@ -55,6 +58,9 @@ public struct AboutView<IconImage>: View
 
                 Text(plea)
                     .foregroundColor(.accentColor)
+                #if os(iOS)
+                    .padding(.horizontal)
+                #endif
 
                 VStack(spacing: 5) {
                     Section("Website") {
@@ -82,10 +88,6 @@ public struct AboutView<IconImage>: View
         .navigationTitle("About")
     }
 
-    private var plea: String {
-        "As an open source project, \(shortAppName) depends on its community of users. If you use this app, please help by rating and reviewing in the App Store!"
-    }
-
     private var appName: String {
         Bundle.main.appName ?? ""
     }
@@ -108,16 +110,13 @@ struct AboutView_Previews: PreviewProvider {
 
     static var previews: some View {
         NavigationStack {
-            AboutView( //                appName: "Gym Routine Tracker Plus",
-                //                      displayName: "Gym RT+",
-//                      releaseVersionNumber: "1.0",
-//                      buildNumber: "100",
+            AboutView(
                 shortAppName: "DCT+",
                 websiteURL: url,
                 privacyURL: url.appending(path: "privacy"),
                 termsURL: url.appending(path: "terms"),
                 tutorialURL: url.appending(path: "tutorial"),
-                copyright: "Copyright 2022, 2023 OpenAlloc LLC"
+                copyright: "Copyright 2022, 2023 OpenAlloc LLC", plea: "Blah!"
             ) {
                 Image(systemName: "g.circle.fill")
                     .imageScale(.large)
