@@ -11,7 +11,7 @@ let package = Package(name: "TrackerUI",
                       dependencies: [
                           .package(url: "https://github.com/openalloc/SwiftCompactor", from: "1.3.0"),
                           .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
-                          .package(name: "TrackerLib", path: "../TrackerLib"),
+                          .package(url: "https://github.com/open-trackers/TrackerLib.git", from: "1.0.0"),
                       ],
                       targets: [
                           .target(name: "TrackerUI",

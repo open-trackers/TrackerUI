@@ -116,7 +116,7 @@ struct AboutView_Previews: PreviewProvider {
                 privacyURL: url.appending(path: "privacy"),
                 termsURL: url.appending(path: "terms"),
                 tutorialURL: url.appending(path: "tutorial"),
-                copyright: "Copyright 2022, 2023 OpenAlloc LLC", plea: "Blah!"
+                copyright: "Copyright 2023 OpenAlloc LLC", plea: "Blah!"
             ) {
                 Image(systemName: "g.circle.fill")
                     .imageScale(.large)
