@@ -76,7 +76,8 @@
             .fileExporter(isPresented: $showFileExport,
                           document: zipDocument,
                           contentType: .zip,
-                          defaultFilename: zipFileName) { result in
+                          defaultFilename: zipFileName)
+            { result in
                 switch result {
                 case let .success(url):
                     logger.notice("\(#function): saved to \(url)")

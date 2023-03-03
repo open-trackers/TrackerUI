@@ -35,7 +35,7 @@ public struct AddElementButton<Element>: View
     }
 
     // MARK: - Locals
-    
+
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: AddElementButton.self))
 

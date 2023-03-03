@@ -43,14 +43,13 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
 
     // MARK: - Locals
 
-    @FetchRequest( // entity: Element.entity(),
+    @FetchRequest(// entity: Element.entity(),
         sortDescriptors: [
             NSSortDescriptor(key: "userOrder", ascending: true),
             // SortDescriptor(\Element.userOrder, order: .forward)
             // NSSortDescriptor(keyPath: \Element.userOrder, ascending: true),
         ],
-        animation: .default
-    )
+        animation: .default)
 
     private var elements: FetchedResults<Element>
 
@@ -104,7 +103,7 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
                             isPresented: $confirmDelete,
                             actions: confirmedDelete)
         .onReceive(timer) { _ in
-            self.now = Date.now
+            now = Date.now
         }
         .onAppear {
             // refresh immediately when tab/screen is shown (timer only updates 'now' on the minute)
@@ -164,7 +163,8 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
     private func confirmedDelete() -> some View {
         withAnimation {
             Button("Delete ‘\(toBeDeleted?.name ?? "")’",
-                   role: .destructive) {
+                   role: .destructive)
+            {
                 deleteAction(element: toBeDeleted)
                 confirmDelete = false
                 toBeDeleted = nil

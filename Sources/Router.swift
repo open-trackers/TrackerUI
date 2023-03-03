@@ -11,8 +11,6 @@
 import os
 import SwiftUI
 
-
-
 @MainActor public final class Router<T: Hashable>: ObservableObject {
     // MARK: - Parameters
 
@@ -22,7 +20,7 @@ import SwiftUI
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: Router<T>.self))
-    
+
     @Published public var path: [T] = []
 //    {
 //        didSet {

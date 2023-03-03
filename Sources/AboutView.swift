@@ -110,14 +110,13 @@ struct AboutView_Previews: PreviewProvider {
 
     static var previews: some View {
         NavigationStack {
-            AboutView(
-                shortAppName: "DCT+",
-                websiteURL: url,
-                privacyURL: url.appending(path: "privacy"),
-                termsURL: url.appending(path: "terms"),
-                tutorialURL: url.appending(path: "tutorial"),
-                copyright: "Copyright 2023 OpenAlloc LLC", plea: "Blah!"
-            ) {
+            AboutView(shortAppName: "DCT+",
+                      websiteURL: url,
+                      privacyURL: url.appending(path: "privacy"),
+                      termsURL: url.appending(path: "terms"),
+                      tutorialURL: url.appending(path: "tutorial"),
+                      copyright: "Copyright 2023 OpenAlloc LLC", plea: "Blah!")
+            {
                 Image(systemName: "g.circle.fill")
                     .imageScale(.large)
             }

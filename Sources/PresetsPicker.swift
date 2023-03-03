@@ -59,7 +59,7 @@ public struct PresetsPicker<Key, NamedValue, Label>: View
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { self.showPresets = false }
+                Button("Cancel") { showPresets = false }
             }
         }
     }
