@@ -33,7 +33,7 @@ public struct BaseSettingsForm<Content: View>: View {
     #endif
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                                category: "BaseSettingsForm")
+                                category: String(describing: BaseSettingsForm<Content>.self))
 
     @State private var showRestoreDialog = false
 

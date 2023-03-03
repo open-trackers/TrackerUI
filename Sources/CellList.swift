@@ -61,7 +61,7 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
                                       in: .common).autoconnect()
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                                category: "CellList")
+                                category: String(describing: CellList<Element, Cell, Add, ExtraListItems>.self))
 
     // support for delete confirmation dialog
     @State private var toBeDeleted: Element? = nil
