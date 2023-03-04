@@ -125,6 +125,7 @@ public struct Cell<Element, Subtitle>: View
             .italic()
             .opacity(0.8)
             .lineLimit(1)
+            .truncationMode(.middle)
     }
 
     private var cellForeground: Color {
