@@ -12,14 +12,17 @@ import SwiftUI
 
 public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let values: [T]
+    private let minimumWidth: CGFloat
     private let label: (T) -> Label
     private let onSelect: (T) -> Void
 
     public init(values: [T],
+                minimumWidth: CGFloat = 100,
                 label: @escaping (T) -> Label,
                 onSelect: @escaping (T) -> Void)
     {
         self.values = values
+        self.minimumWidth = minimumWidth
         self.label = label
         self.onSelect = onSelect
     }
@@ -30,7 +33,7 @@ public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let rowSpacing: CGFloat = 5
 
     private var gridItems: [GridItem] { [
-        GridItem(.adaptive(minimum: 100),
+        GridItem(.adaptive(minimum: minimumWidth),
                  spacing: columnSpacing),
     ] }
 
