@@ -89,7 +89,7 @@ import SwiftUI
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
-                            color = Color(cgColor: CGColor(red: r, green: g, blue: b, alpha: a))
+                            color = userSelected
                             showSliders = false
                         }
                     }
