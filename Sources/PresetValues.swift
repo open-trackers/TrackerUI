@@ -14,17 +14,20 @@ public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let values: [T]
     private let minimumWidth: CGFloat
     private let label: (T) -> Label
-    private let onSelect: (T) -> Void
+    private let onLongPress: ((T) -> Void)?
+    private let onShortPress: (T) -> Void
 
     public init(values: [T],
                 minimumWidth: CGFloat = 100,
                 label: @escaping (T) -> Label,
-                onSelect: @escaping (T) -> Void)
+                onLongPress: ((T) -> Void)? = { _ in },
+                onShortPress: @escaping (T) -> Void)
     {
         self.values = values
         self.minimumWidth = minimumWidth
         self.label = label
-        self.onSelect = onSelect
+        self.onLongPress = onLongPress
+        self.onShortPress = onShortPress
     }
 
     // MARK: - Locals
@@ -39,19 +42,41 @@ public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
 
     public var body: some View {
         LazyVGrid(columns: gridItems, spacing: rowSpacing) {
-            ForEach(values, id: \.self) { amount in
-                Button(action: {
-                    withAnimation {
-                        onSelect(amount)
+            if let onLongPress {
+                ForEach(values, id: \.self) { amount in
+                    Button(action: {}, label: { myLabel(amount) })
+                        .simultaneousGesture(
+                            LongPressGesture()
+                                .onEnded { _ in
+                                    onLongPress(amount)
+                                }
+                        )
+                        .highPriorityGesture(
+                            TapGesture()
+                                .onEnded { _ in
+                                    onShortPress(amount)
+                                }
+                        )
+                }
+            } else {
+                ForEach(values, id: \.self) { amount in
+                    Button(action: {
+                        withAnimation {
+                            onShortPress(amount)
+                        }
+                    }) {
+                        myLabel(amount)
                     }
-                }) {
-                    label(amount)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity)
                 }
             }
         }
         .buttonStyle(.bordered)
+    }
+
+    private func myLabel(_ amount: T) -> some View {
+        label(amount)
+            .lineLimit(1)
+            .frame(maxWidth: .infinity)
     }
 }
 
