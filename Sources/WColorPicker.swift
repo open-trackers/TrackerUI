@@ -1,5 +1,5 @@
 //
-//  View-extension.swift
+//  WColorPicker.swift
 //
 // Copyright 2023  OpenAlloc LLC
 //
