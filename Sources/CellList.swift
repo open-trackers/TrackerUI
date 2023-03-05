@@ -18,11 +18,11 @@ public protocol Named {
     var name: String? { get set }
 }
 
-public struct CellList<Element, Cell, Add, ExtraListItems>: View
+public struct CellList<Element, Cell, Add, ButtonArray>: View
     where Element: NSManagedObject & UserOrdered & Named,
     Cell: View,
     Add: View,
-    ExtraListItems: View
+    ButtonArray: View
 {
     @Environment(\.managedObjectContext) private var viewContext
 
@@ -30,15 +30,15 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
 
     private let cell: (Element, Binding<Date>) -> Cell
     private let addButton: () -> Add
-    private let extraListItems: () -> ExtraListItems
+    private let buttonArray: () -> ButtonArray
 
     public init(cell: @escaping (Element, Binding<Date>) -> Cell,
                 addButton: @escaping () -> Add,
-                @ViewBuilder extraListItems: @escaping () -> ExtraListItems = { EmptyView() })
+                @ViewBuilder buttonArray: @escaping () -> ButtonArray = { EmptyView() })
     {
         self.cell = cell
         self.addButton = addButton
-        self.extraListItems = extraListItems
+        self.buttonArray = buttonArray
     }
 
     // MARK: - Locals
@@ -60,7 +60,7 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
                                       in: .common).autoconnect()
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                                category: String(describing: CellList<Element, Cell, Add, ExtraListItems>.self))
+                                category: String(describing: CellList<Element, Cell, Add, ButtonArray>.self))
 
     // support for delete confirmation dialog
     @State private var toBeDeleted: Element? = nil
@@ -84,7 +84,11 @@ public struct CellList<Element, Cell, Add, ExtraListItems>: View
             .listRowBackground(rowBackground)
             #endif
 
-            extraListItems()
+            buttonArray()
+                .listItemTint(Color.accentColor.opacity(0.2))
+                .font(.title3)
+                .foregroundStyle(.tint)
+                .symbolRenderingMode(.hierarchical)
         }
 
         #if os(watchOS)
