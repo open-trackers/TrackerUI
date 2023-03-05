@@ -49,7 +49,7 @@ public struct BaseSettingsForm<Content: View>: View {
 
             #if os(watchOS)
                 restoreButton
-                    .buttonStyle(.borderedProminent)
+                    .foregroundStyle(.tint)
             #endif
         }
         #if os(iOS)
