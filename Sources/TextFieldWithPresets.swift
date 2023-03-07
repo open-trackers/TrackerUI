@@ -26,19 +26,19 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
 
     // MARK: - Parameters
 
-    @Binding private var namedValue: NamedValue
+    @Binding private var title: String
     private let prompt: String
     private let presets: PresetsType
     private let onSelect: PresetsOnSelect
     private let label: PresetsLabel
 
-    public init(_ namedValue: Binding<NamedValue>,
+    public init(_ title: Binding<String>,
                 prompt: String,
                 presets: PresetsType,
                 onSelect: @escaping PresetsOnSelect,
                 label: @escaping PresetsLabel)
     {
-        _namedValue = namedValue
+        _title = title
         self.prompt = prompt
         self.presets = presets
         self.onSelect = onSelect
@@ -53,9 +53,10 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
 
     public var body: some View {
         HStack {
-            TextField(text: $namedValue.title,
+            TextField(text: $title,
                       prompt: Text(prompt),
                       axis: .vertical) { EmptyView() }
+
             Button(action: {
                 showPresetNames = true
             }) {
@@ -73,7 +74,8 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
                               showPresets: $showPresetNames,
                               onSelect: { groupKey, presetValue in
                                   // set the hard-coded name from the preset
-                                  namedValue.title = presetValue.title
+                                  title = presetValue.title
+                                  // allow caller to assign other fields, like volume and weight in DCT
                                   onSelect(groupKey, presetValue)
                               },
                               label: label)
