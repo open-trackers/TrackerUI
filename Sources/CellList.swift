@@ -75,14 +75,14 @@ public struct CellList<Element, Cell, Add, ButtonArray>: View
                     .swipeActions(edge: .trailing) {
                         swipeToDelete(element: element)
                     }
+                #if os(watchOS)
+                    .listItemTint(.orange)
+                #elseif os(iOS)
+                    .listRowBackground(rowBackground)
+                #endif
             }
             .onMove(perform: moveAction)
             // .onDelete(perform: deleteAction)
-            #if os(watchOS)
-            .listItemTint(.orange)
-            #elseif os(iOS)
-            .listRowBackground(rowBackground)
-            #endif
 
             buttonArray()
                 .listItemTint(Color.accentColor.opacity(0.2))
