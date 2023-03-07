@@ -67,9 +67,6 @@
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-            } header: {
-                Text("Data Export")
-                    .foregroundStyle(.tint)
             } footer: {
                 Text("Will export data to ZIP archive containing \(exportFormat.description) (\(exportFormat.rawValue)) files.")
             }
