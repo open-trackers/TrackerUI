@@ -15,13 +15,13 @@ public struct ActionButton: View {
 
     private let onShortPress: () -> Void
     private let imageSystemName: String // "arrow.backward"
-    private let buttonText: String // "Previous"
+    private let buttonText: String? // "Previous"
     private let tint: Color
     private let onLongPress: (() -> Void)?
 
     public init(onShortPress: @escaping () -> Void,
                 imageSystemName: String,
-                buttonText: String,
+                buttonText: String? = nil,
                 tint: Color,
                 onLongPress: (() -> Void)? = nil)
     {
@@ -44,8 +44,10 @@ public struct ActionButton: View {
         VStack {
             buttonBody
 
-            Text(buttonText)
-                .lineLimit(1)
+            if let buttonText {
+                Text(buttonText)
+                    .lineLimit(1)
+            }
         }
     }
 
