@@ -13,6 +13,10 @@ import SwiftUI
 
 import TrackerLib
 
+public extension Notification.Name {
+    static let trackerPopNavStack = Notification.Name("tracker-pop-nav-stack") // payload of stackIdentifier UUID
+}
+
 extension BaseCoreDataStack: ObservableObject {}
 
 public struct BaseNavStack<Destination, Content, MyRoute>: View
@@ -27,16 +31,19 @@ public struct BaseNavStack<Destination, Content, MyRoute>: View
     // MARK: - Parameters
 
     @Binding private var navData: Data?
+    private var stackIdentifier: UUID
     private var coreDataStack: BaseCoreDataStack
     private var destination: DestinationFn
     private var content: () -> Content
 
     public init(navData: Binding<Data?>,
+                stackIdentifier: UUID,
                 coreDataStack: BaseCoreDataStack,
                 @ViewBuilder destination: @escaping DestinationFn,
                 @ViewBuilder content: @escaping () -> Content)
     {
         _navData = navData
+        self.stackIdentifier = stackIdentifier
         self.coreDataStack = coreDataStack
         self.destination = destination
         self.content = content
@@ -48,6 +55,8 @@ public struct BaseNavStack<Destination, Content, MyRoute>: View
                                 category: String(describing: BaseNavStack<Destination, Content, MyRoute>.self))
 
     @StateObject private var router: MyRouter = .init()
+
+    private let popStackPublisher = NotificationCenter.default.publisher(for: .trackerPopNavStack)
 
     // MARK: - Views
 
@@ -61,6 +70,13 @@ public struct BaseNavStack<Destination, Content, MyRoute>: View
                 .onChange(of: scenePhase, perform: scenePhaseChangeAction)
         }
         .interactiveDismissDisabled() // NOTE: needed to prevent home button from dismissing sheet
+        .onReceive(popStackPublisher) { payload in
+            logger.debug("onReceive: \(popStackPublisher.name.rawValue)")
+            guard let uuid = payload.object as? UUID,
+                  uuid == stackIdentifier
+            else { return }
+            router.path = [] // pop!
+        }
     }
 
     // obtain the view for the given route
