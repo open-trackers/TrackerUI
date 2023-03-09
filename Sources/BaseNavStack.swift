@@ -14,7 +14,7 @@ import SwiftUI
 import TrackerLib
 
 public extension Notification.Name {
-    static let trackerPopNavStack = Notification.Name("tracker-pop-nav-stack") // payload of stackIdentifier UUID
+    static let trackerPopNavStack = Notification.Name("tracker-pop-nav-stack") // payload of stackIdentifier String
 }
 
 extension BaseCoreDataStack: ObservableObject {}
@@ -31,13 +31,13 @@ public struct BaseNavStack<Destination, Content, MyRoute>: View
     // MARK: - Parameters
 
     @Binding private var navData: Data?
-    private var stackIdentifier: UUID
+    private var stackIdentifier: String?
     private var coreDataStack: BaseCoreDataStack
     private var destination: DestinationFn
     private var content: () -> Content
 
     public init(navData: Binding<Data?>,
-                stackIdentifier: UUID,
+                stackIdentifier: String?,
                 coreDataStack: BaseCoreDataStack,
                 @ViewBuilder destination: @escaping DestinationFn,
                 @ViewBuilder content: @escaping () -> Content)
@@ -72,8 +72,9 @@ public struct BaseNavStack<Destination, Content, MyRoute>: View
         .interactiveDismissDisabled() // NOTE: needed to prevent home button from dismissing sheet
         .onReceive(popStackPublisher) { payload in
             logger.debug("onReceive: \(popStackPublisher.name.rawValue)")
-            guard let uuid = payload.object as? UUID,
-                  uuid == stackIdentifier
+            guard let stackIdentifier,
+                  let strID = payload.object as? String,
+                  strID == stackIdentifier
             else { return }
             router.path = [] // pop!
         }
