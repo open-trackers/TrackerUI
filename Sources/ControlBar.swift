@@ -19,6 +19,7 @@ public protocol ControlBarProtocol: RawRepresentable where RawValue == Int {
 }
 
 /// A navigation control for detail pages (on the watch)
+/// It allows detail items to be broken up onto their own pages, so that the crown's focus will be a bit more predictable.
 public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
     @Binding private var selection: T
     private let tint: Color
