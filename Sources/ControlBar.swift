@@ -61,9 +61,9 @@ public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
         .buttonStyle(.plain)
         // .padding(.bottom)
     }
-    
+
     // MARK: - Actions
-    
+
     private func tapAction() {
         if selection == T.first {
             selection = T.last
