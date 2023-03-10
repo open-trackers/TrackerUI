@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-/// This is intended to be inherited by an Int-based enum
+/// This is intended to be implemented by an Int-based enum
 public protocol ControlBarProtocol: RawRepresentable where RawValue == Int {
     static var first: Self { get }
     static var last: Self { get }
