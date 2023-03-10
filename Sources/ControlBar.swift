@@ -19,7 +19,7 @@ public protocol ControlBarProtocol: RawRepresentable where RawValue == Int {
 }
 
 /// A navigation control for detail pages (on the watch)
-public struct ControlBar<T: ControlBarProtocol>: View {
+public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
     @Binding private var selection: T
     private let tint: Color
 
