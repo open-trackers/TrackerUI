@@ -18,6 +18,7 @@ public protocol ControlBarProtocol: RawRepresentable where RawValue == Int {
     var previous: Self? { get }
 }
 
+/// A navigation control for detail pages (on the watch)
 public struct ControlBar<T: ControlBarProtocol>: View {
     @Binding private var selection: T
     private let tint: Color
@@ -41,6 +42,7 @@ public struct ControlBar<T: ControlBarProtocol>: View {
             Spacer()
 
             Text("\(selection.rawValue) of \(T.last.rawValue)")
+                .onTapGesture(perform: tapAction)
 
             Spacer()
 
@@ -57,6 +59,16 @@ public struct ControlBar<T: ControlBarProtocol>: View {
         // .padding(.horizontal, 20)
         .buttonStyle(.plain)
         // .padding(.bottom)
+    }
+    
+    // MARK: - Actions
+    
+    private func tapAction() {
+        if selection == T.first {
+            selection = T.last
+        } else {
+            selection = T.first
+        }
     }
 }
 
