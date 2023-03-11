@@ -11,7 +11,7 @@
 import SwiftUI
 
 /// This is intended to be implemented by an Int-based enum
-public protocol ControlBarProtocol: RawRepresentable where RawValue == Int {
+public protocol ControlBarred: RawRepresentable, Equatable where RawValue == Int {
     static var first: Self { get }
     static var last: Self { get }
     var next: Self? { get }
@@ -20,7 +20,7 @@ public protocol ControlBarProtocol: RawRepresentable where RawValue == Int {
 
 /// A navigation control for detail pages (on the watch)
 /// It allows detail items to be broken up onto their own pages, so that the crown's focus will be a bit more predictable.
-public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
+public struct ControlBar<T: ControlBarred>: View {
     @Binding private var selection: T
     private let tint: Color
 
@@ -34,6 +34,7 @@ public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
             Button(action: {
                 guard let previous = selection.previous else { return }
                 selection = previous
+                Haptics.play()
             }) {
                 Image(systemName: "arrow.left.circle.fill")
             }
@@ -57,6 +58,7 @@ public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
             Button(action: {
                 guard let next = selection.next else { return }
                 selection = next
+                Haptics.play()
             }) {
                 Image(systemName: "arrow.right.circle.fill")
             }
@@ -77,6 +79,7 @@ public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
         } else {
             selection = T.first
         }
+        Haptics.play()
     }
 }
 

@@ -13,7 +13,7 @@ import SwiftUI
 public struct ControlBarTabView<Content, Selection>: View
     where
     Content: View,
-    Selection: Hashable & ControlBarProtocol
+    Selection: Hashable & ControlBarred
 {
     @Binding var selection: Selection
     private let tint: Color
@@ -56,7 +56,7 @@ public struct ControlBarTabView<Content, Selection>: View
 }
 
 struct BarTabView_Previews: PreviewProvider {
-    enum Tab: Int, ControlBarProtocol {
+    enum Tab: Int, ControlBarred {
         case one = 1
         case two = 2
         case three = 3
