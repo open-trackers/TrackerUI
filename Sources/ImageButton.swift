@@ -51,7 +51,7 @@ public struct ImageButton: View {
         // .border(.green)
     }
 
-    // NOTE this implementation was picking up spurious button clicks
+    // NOTE: this implementation was picking up spurious button clicks
 //        ZStack {
 //            Image(systemName: systemName)
 //

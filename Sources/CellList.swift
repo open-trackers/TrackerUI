@@ -152,7 +152,7 @@ public struct CellList<Element, Cell, Add, ButtonArray>: View
 
     // swipe button to be shown when user has swiped left
     private func swipeToDelete(element: Element) -> some View {
-        // NOTE that button role is NOT destructive, to prevent item from disappearing before confirmation
+        // NOTE: that button role is NOT destructive, to prevent item from disappearing before confirmation
         Button(role: .none) {
             toBeDeleted = element
             Haptics.play(.warning)

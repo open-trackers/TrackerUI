@@ -83,7 +83,7 @@ public struct AboutView<IconImage>: View
                         .foregroundStyle(.secondary)
                 }
             }
-            .multilineTextAlignment(.center) // NOTE to center the copyright on watch
+            .multilineTextAlignment(.center) // NOTE: to center the copyright on watch
         }
         .navigationTitle("About")
     }
