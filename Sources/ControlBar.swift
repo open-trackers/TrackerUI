@@ -43,6 +43,13 @@ public struct ControlBar<T: ControlBarProtocol & Equatable>: View {
             Spacer()
 
             Text("\(selection.rawValue) of \(T.last.rawValue)")
+                .modify {
+                    if #available(iOS 16.1, watchOS 9.1, *) {
+                        $0.fontDesign(.monospaced)
+                    } else {
+                        $0.monospaced()
+                    }
+                }
                 .onTapGesture(perform: tapAction)
 
             Spacer()
