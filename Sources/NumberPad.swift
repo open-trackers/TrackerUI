@@ -115,6 +115,7 @@ public struct NumberPad<T: BinaryInteger>: View {
             value.append(strNum)
         }
         refreshSelection()
+        Haptics.play()
     }
 
     private func backspaceAction() {
@@ -124,12 +125,15 @@ public struct NumberPad<T: BinaryInteger>: View {
             value.removeLast()
         }
         refreshSelection()
+        Haptics.play()
     }
 
     // MARK: - Helpers
 
     private func refreshSelection() {
         let intValue = Int(value) ?? 0
+        //TODO need to cap to range of T
+        //T.init(value, format: "%d", lenient: true)
         selection = T(intValue).clamped(to: range)
     }
 
