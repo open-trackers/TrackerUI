@@ -21,7 +21,6 @@ public struct ValueStepper<T>: View
     private let specifier: String
     private let ifZero: String?
     private let multiplier: T
-    private let maxHeight: CGFloat
     private let maxFontSize: CGFloat
 
     public init(value: Binding<T>,
@@ -30,7 +29,6 @@ public struct ValueStepper<T>: View
                 specifier: String,
                 ifZero: String? = nil,
                 multiplier: T = 1,
-                maxHeight: CGFloat = 60,
                 maxFontSize: CGFloat = 40)
     {
         _value = value
@@ -39,7 +37,6 @@ public struct ValueStepper<T>: View
         self.specifier = specifier
         self.ifZero = ifZero
         self.multiplier = multiplier
-        self.maxHeight = maxHeight
         self.maxFontSize = maxFontSize
     }
 
@@ -59,7 +56,6 @@ public struct ValueStepper<T>: View
                 }
             #endif
         }
-        .frame(maxHeight: maxHeight)
     }
 
     @ViewBuilder

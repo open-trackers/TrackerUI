@@ -12,19 +12,24 @@ import SwiftUI
 
 public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let values: [T]
-    private let minimumWidth: CGFloat
+    private let geoWidth: CGFloat
+    private let countPerRow: Int
+
     private let label: (T) -> Label
     private let onLongPress: ((T) -> Void)?
     private let onShortPress: (T) -> Void
 
     public init(values: [T],
-                minimumWidth: CGFloat = 100,
+                geoWidth: CGFloat,
+                countPerRow: Int,
                 label: @escaping (T) -> Label,
                 onLongPress: ((T) -> Void)? = { _ in },
                 onShortPress: @escaping (T) -> Void)
     {
         self.values = values
-        self.minimumWidth = minimumWidth
+        // self.widthRange = widthRange
+        self.geoWidth = geoWidth
+        self.countPerRow = countPerRow
         self.label = label
         self.onLongPress = onLongPress
         self.onShortPress = onShortPress
@@ -36,9 +41,17 @@ public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let rowSpacing: CGFloat = 5
 
     private var gridItems: [GridItem] { [
-        GridItem(.adaptive(minimum: minimumWidth),
+        GridItem(.adaptive(minimum: widthRange.lowerBound,
+                           maximum: widthRange.upperBound),
                  spacing: columnSpacing),
     ] }
+
+    private var widthRange: ClosedRange<CGFloat> {
+        let marginFudge: CGFloat = 10
+        let lower = (geoWidth / CGFloat(countPerRow)) - marginFudge
+        let upper = (geoWidth / CGFloat(countPerRow)) + 1
+        return lower ... upper
+    }
 
     public var body: some View {
         LazyVGrid(columns: gridItems, spacing: rowSpacing) {
@@ -83,7 +96,10 @@ public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
 struct PresetValues_Previews: PreviewProvider {
     static var previews: some View {
         Form {
-            PresetValues(values: [10, 20, 30], label: { Text("\($0)") }) { _ in }
+            PresetValues(values: [10, 20, 30],
+                         geoWidth: 600,
+                         countPerRow: 3,
+                         label: { Text("\($0)") }) { _ in }
         }
     }
 }
