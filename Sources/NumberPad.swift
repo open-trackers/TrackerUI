@@ -10,25 +10,31 @@
 
 import SwiftUI
 
-public struct NumberPad: View {
-    @Binding private var selection: Int
-    private let maxDigits: Int
+public struct NumberPad<T: BinaryInteger>: View {
+    @Binding private var selection: T
+    private let range: ClosedRange<T>
 
     // MARK: - Parameters
 
-    public init(selection: Binding<Int>, maxDigits: Int = 9, locale _: Locale = .current) {
+    public init(selection: Binding<T>, range: ClosedRange<T>) {
         _selection = selection
-        self.maxDigits = maxDigits
+        self.range = range
 
-        _value = State(initialValue: String(format: "%d", selection.wrappedValue))
+        let clamped = T(selection.wrappedValue).clamped(to: range)
+        let formatted = String(format: "%d", Int(clamped))
+        _value = State(initialValue: formatted)
+
+        let upperStr = String(format: "%d", Int(range.upperBound))
+        maxDigits = upperStr.count
     }
 
     // MARK: - Locals
 
     @State private var value: String
+    private let maxDigits: Int
 
-    private var horzSpace: CGFloat = 3
-    private var vertSpace: CGFloat = 3
+    private let horzSpace: CGFloat = 3
+    private let vertSpace: CGFloat = 3
 
     // MARK: - Views
 
@@ -123,7 +129,8 @@ public struct NumberPad: View {
     // MARK: - Helpers
 
     private func refreshSelection() {
-        selection = Int(value) ?? 0
+        let intValue = Int(value) ?? 0
+        selection = T(intValue).clamped(to: range)
     }
 
     private func forceZero() {
@@ -133,11 +140,11 @@ public struct NumberPad: View {
 
 struct NumberPad_Previews: PreviewProvider {
     struct TestHolder: View {
-        @State var value: Int = 23423
+        @State var value: Int16 = 23423
         var body: some View {
             VStack {
                 Text("\(value)")
-                NumberPad(selection: $value, maxDigits: 6)
+                NumberPad(selection: $value, range: 0 ... 30000)
                     .font(.title2)
             }
             .modify {
