@@ -10,17 +10,18 @@
 
 import SwiftUI
 
-public struct ControlBarTabView<Content, Selection>: View
+public struct ControlBarTabView<Content, T>: View
     where
     Content: View,
-    Selection: Hashable & ControlBarred
+    T: RawRepresentable & Equatable & CaseIterable & Hashable,
+    T.RawValue == Int
 {
-    @Binding var selection: Selection
+    @Binding var selection: T
     private let tint: Color
     private let title: String
     private let content: () -> Content
 
-    public init(selection: Binding<Selection>,
+    public init(selection: Binding<T>,
                 tint: Color,
                 title: String,
                 @ViewBuilder content: @escaping () -> Content)
@@ -57,7 +58,7 @@ public struct ControlBarTabView<Content, Selection>: View
 }
 
 struct BarTabView_Previews: PreviewProvider {
-    enum Tab: Int, ControlBarred {
+    enum Tab: Int, CaseIterable {
         case one = 1
         case two = 2
         case three = 3

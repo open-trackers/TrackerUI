@@ -10,17 +10,12 @@
 
 import SwiftUI
 
-/// This is intended to be implemented by an Int-based enum
-public protocol ControlBarred: RawRepresentable, Equatable where RawValue == Int {
-    static var first: Self { get }
-    static var last: Self { get }
-    var next: Self? { get }
-    var previous: Self? { get }
-}
-
 /// A navigation control for detail pages (on the watch)
 /// It allows detail items to be broken up onto their own pages, so that the crown's focus will be a bit more predictable.
-public struct ControlBar<T: ControlBarred>: View {
+public struct ControlBar<T>: View
+    where T: RawRepresentable & Equatable & CaseIterable,
+    T.RawValue == Int
+{
     @Binding private var selection: T
     private let tint: Color
 
@@ -32,21 +27,21 @@ public struct ControlBar<T: ControlBarred>: View {
     public var body: some View {
         HStack {
             Button(action: {
-                guard let previous = selection.previous else { return }
+                guard let previous = previous(selection) else { return }
                 selection = previous
                 Haptics.play()
             }) {
                 Image(systemName: "arrow.left.circle.fill")
             }
             .foregroundStyle(tint)
-            .disabled(selection == T.first)
+            .disabled(selection == first)
 
             Spacer()
 
             // Capsule(style: .circular)
             //     .fill(tint)
 
-            Text("\(selection.rawValue) of \(T.last.rawValue)")
+            Text("\(selection.rawValue) of \(last.rawValue)")
                 .modify {
                     if #available(iOS 16.1, watchOS 9.1, *) {
                         $0.fontDesign(.monospaced)
@@ -59,14 +54,14 @@ public struct ControlBar<T: ControlBarred>: View {
             Spacer()
 
             Button(action: {
-                guard let next = selection.next else { return }
+                guard let next = next(selection) else { return }
                 selection = next
                 Haptics.play()
             }) {
                 Image(systemName: "arrow.right.circle.fill")
             }
             .foregroundStyle(tint)
-            .disabled(selection == T.last)
+            .disabled(selection == last)
         }
         .imageScale(.large)
         // .padding(.horizontal, 20)
@@ -75,20 +70,48 @@ public struct ControlBar<T: ControlBarred>: View {
         // .frame(maxHeight: 20)
     }
 
+    // MARK: - Properties
+
+    private var first: T {
+        T.allCases[T.allCases.startIndex]
+    }
+
+    private var last: T {
+        let endIndex = T.allCases.endIndex // one past end
+        let lastIndex = T.allCases.index(endIndex, offsetBy: -1)
+        return T.allCases[lastIndex]
+    }
+
+    private func previous(_ element: T) -> T? {
+        guard let index = T.allCases.firstIndex(of: element),
+              index != T.allCases.startIndex
+        else { return nil }
+        let previousIndex = T.allCases.index(index, offsetBy: -1)
+        return T.allCases[previousIndex]
+    }
+
+    private func next(_ element: T) -> T? {
+        guard let index = T.allCases.firstIndex(of: element),
+              index != T.allCases.endIndex
+        else { return nil }
+        let nextIndex = T.allCases.index(index, offsetBy: 1)
+        return T.allCases[nextIndex]
+    }
+
     // MARK: - Actions
 
     private func tapAction() {
-        if selection == T.first {
-            selection = T.last
+        if selection == first {
+            selection = last
         } else {
-            selection = T.first
+            selection = first
         }
         Haptics.play()
     }
 }
 
 struct ControlBar_Previews: PreviewProvider {
-    enum Tab: Int, ControlBarred {
+    enum Tab: Int, CaseIterable {
         case one = 1
         case two = 2
         case three = 3
