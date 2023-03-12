@@ -12,24 +12,19 @@ import SwiftUI
 
 public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let values: [T]
-    private let geoWidth: CGFloat
-    private let countPerRow: Int
-
+    private let minButtonWidth: CGFloat
     private let label: (T) -> Label
     private let onLongPress: ((T) -> Void)?
     private let onShortPress: (T) -> Void
 
     public init(values: [T],
-                geoWidth: CGFloat,
-                countPerRow: Int,
+                minButtonWidth: CGFloat,
                 label: @escaping (T) -> Label,
                 onLongPress: ((T) -> Void)? = { _ in },
                 onShortPress: @escaping (T) -> Void)
     {
         self.values = values
-        // self.widthRange = widthRange
-        self.geoWidth = geoWidth
-        self.countPerRow = countPerRow
+        self.minButtonWidth = minButtonWidth
         self.label = label
         self.onLongPress = onLongPress
         self.onShortPress = onShortPress
@@ -41,17 +36,9 @@ public struct PresetValues<T: Numeric & Hashable, Label: View>: View {
     private let rowSpacing: CGFloat = 5
 
     private var gridItems: [GridItem] { [
-        GridItem(.adaptive(minimum: widthRange.lowerBound,
-                           maximum: widthRange.upperBound),
+        GridItem(.adaptive(minimum: minButtonWidth),
                  spacing: columnSpacing),
     ] }
-
-    private var widthRange: ClosedRange<CGFloat> {
-        let marginFudge: CGFloat = 10
-        let lower = (geoWidth / CGFloat(countPerRow)) - marginFudge
-        let upper = (geoWidth / CGFloat(countPerRow)) + 1
-        return lower ... upper
-    }
 
     public var body: some View {
         LazyVGrid(columns: gridItems, spacing: rowSpacing) {
@@ -97,8 +84,7 @@ struct PresetValues_Previews: PreviewProvider {
     static var previews: some View {
         Form {
             PresetValues(values: [10, 20, 30],
-                         geoWidth: 600,
-                         countPerRow: 3,
+                         minButtonWidth: 100,
                          label: { Text("\($0)") }) { _ in }
         }
     }
