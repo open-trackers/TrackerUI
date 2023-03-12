@@ -86,5 +86,6 @@ struct BarTabView_Previews: PreviewProvider {
     static var previews: some View {
         TestHolder()
             .accentColor(.orange)
+            .symbolRenderingMode(.hierarchical)
     }
 }

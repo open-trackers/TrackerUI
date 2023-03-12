@@ -43,6 +43,9 @@ public struct ControlBar<T: ControlBarred>: View {
 
             Spacer()
 
+            // Capsule(style: .circular)
+            //     .fill(tint)
+
             Text("\(selection.rawValue) of \(T.last.rawValue)")
                 .modify {
                     if #available(iOS 16.1, watchOS 9.1, *) {
@@ -69,6 +72,7 @@ public struct ControlBar<T: ControlBarred>: View {
         // .padding(.horizontal, 20)
         .buttonStyle(.plain)
         // .padding(.bottom)
+        // .frame(maxHeight: 20)
     }
 
     // MARK: - Actions
@@ -83,8 +87,32 @@ public struct ControlBar<T: ControlBarred>: View {
     }
 }
 
-// struct ControlBar_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ControlBar()
-//    }
-// }
+struct ControlBar_Previews: PreviewProvider {
+    enum Tab: Int, ControlBarred {
+        case one = 1
+        case two = 2
+        case three = 3
+        static var first: Tab = .one
+        static var last: Tab = .three
+        var previous: Tab? {
+            Tab(rawValue: rawValue - 1)
+        }
+
+        var next: Tab? {
+            Tab(rawValue: rawValue + 1)
+        }
+    }
+
+    struct TestHolder: View {
+        @State var selection: Tab = .one
+        var body: some View {
+            ControlBar(selection: $selection, tint: .green)
+        }
+    }
+
+    static var previews: some View {
+        TestHolder()
+            .accentColor(.orange)
+            .symbolRenderingMode(.hierarchical)
+    }
+}
