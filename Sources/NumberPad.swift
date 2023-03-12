@@ -1,5 +1,5 @@
 //
-//  NumberImage.swift
+//  NumberPad.swift
 //
 // Copyright 2023  OpenAlloc LLC
 //
@@ -13,12 +13,19 @@ import SwiftUI
 public struct NumberPad<T: FixedWidthInteger>: View {
     @Binding private var selection: T
     private let upperBound: T
+    private let horizontalSpacing: CGFloat
+    private let verticalSpacing: CGFloat
 
     // MARK: - Parameters
 
-    public init(selection: Binding<T>, upperBound: T) {
+    public init(selection: Binding<T>, upperBound: T,
+                horizontalSpacing: CGFloat = 3,
+                verticalSpacing: CGFloat = 3)
+    {
         _selection = selection
         self.upperBound = upperBound
+        self.horizontalSpacing = horizontalSpacing
+        self.verticalSpacing = verticalSpacing
 
         let clamped = min(T(selection.wrappedValue), upperBound)
         let formatted = String(format: "%d", Int(clamped))
@@ -33,79 +40,68 @@ public struct NumberPad<T: FixedWidthInteger>: View {
     @State private var value: String
     private let maxDigits: Int
 
-    private let horzSpace: CGFloat = 3
-    private let vertSpace: CGFloat = 3
-
     // MARK: - Views
 
     public var body: some View {
-        GeometryReader { geo in
-            let buttonWidth = (geo.size.width / 3) - (horzSpace * 2)
-            // let buttonHeight = (geo.size.height / 4) - (vertSpace * 3)
-            VStack(spacing: vertSpace) {
-                HStack(spacing: horzSpace) {
-                    Group {
-                        digit(1)
-                        digit(2)
-                        digit(3)
-                    }
-                    .frame(width: buttonWidth)
+        VStack(spacing: verticalSpacing) {
+            HStack(spacing: horizontalSpacing) {
+                Group {
+                    digit(1)
+                    digit(2)
+                    digit(3)
                 }
-                HStack(spacing: horzSpace) {
-                    Group {
-                        digit(4)
-                        digit(5)
-                        digit(6)
-                    }
-                    .frame(width: buttonWidth)
+            }
+            HStack(spacing: horizontalSpacing) {
+                Group {
+                    digit(4)
+                    digit(5)
+                    digit(6)
                 }
-                HStack(spacing: horzSpace) {
-                    Group {
-                        digit(7)
-                        digit(8)
-                        digit(9)
-                    }
-                    .frame(width: buttonWidth)
+            }
+            HStack(spacing: horizontalSpacing) {
+                Group {
+                    digit(7)
+                    digit(8)
+                    digit(9)
                 }
-                HStack(spacing: horzSpace) {
-                    Group {
-                        // clearValue
-                        digit(nil)
-                        digit(0)
-                        backspace
-                    }
-                    .frame(width: buttonWidth)
+            }
+            HStack(spacing: horizontalSpacing) {
+                Group {
+                    digit(nil)
+                    digit(0)
+                    backspace
                 }
             }
         }
-        .ignoresSafeArea(.all, edges: [.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear(perform: appearAction)
+        // .border(.red)
     }
 
     private func digit(_ num: Int?) -> some View {
         Button(action: { digitAction(num) }) {
             let str: String = num != nil ? "\(num!)" : ""
             Text(str)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(.plain)
+        .modify {
+            if num == nil {
+                $0.hidden()
+            } else {
+                $0
+            }
+        }
         .disabled(value.count >= maxDigits)
     }
-
-//    private var clearValue: some View {
-//        Button(action: clearAction) {
-//            Image(systemName: "xmark.circle.fill")
-//        }
-//        .buttonStyle(.plain)
-//        .disabled(value == "0")
-//    }
 
     private var backspace: some View {
         Button(action: backspaceAction) {
             Image(systemName: "delete.backward.fill")
+                .imageScale(.large)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(.plain)
-        // .foregroundColor(.secondary)
         .disabled(value == "0")
+        .buttonStyle(.plain)
     }
 
     // MARK: - Actions
@@ -161,10 +157,28 @@ public struct NumberPad<T: FixedWidthInteger>: View {
 struct NumberPad_Previews: PreviewProvider {
     struct TestHolder: View {
         @State var value: Int16 = 2333
+        #if os(watchOS)
+            let horz: CGFloat = 3
+            let vert: CGFloat = 3
+        #elseif os(iOS)
+            let horz: CGFloat = 20
+            let vert: CGFloat = 10
+        #endif
         var body: some View {
             VStack {
-                Text("\(value)")
-                NumberPad(selection: $value, upperBound: 30000)
+                #if os(watchOS)
+                    Text("\(value)")
+                #elseif os(iOS)
+                    GroupBox {
+                        Text("\(value)")
+                    } label: {
+                        Text("Calories")
+                    }
+                #endif
+                NumberPad(selection: $value, upperBound: 30000, horizontalSpacing: horz, verticalSpacing: vert)
+                #if os(iOS)
+                    .buttonStyle(.bordered)
+                #endif
                     .font(.title2)
             }
             .modify {
