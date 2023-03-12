@@ -10,21 +10,21 @@
 
 import SwiftUI
 
-public struct NumberPad<T: BinaryInteger>: View {
+public struct NumberPad<T: FixedWidthInteger>: View {
     @Binding private var selection: T
-    private let range: ClosedRange<T>
+    private let upperBound: T
 
     // MARK: - Parameters
 
-    public init(selection: Binding<T>, range: ClosedRange<T>) {
+    public init(selection: Binding<T>, upperBound: T) {
         _selection = selection
-        self.range = range
+        self.upperBound = upperBound
 
-        let clamped = T(selection.wrappedValue).clamped(to: range)
+        let clamped = min(T(selection.wrappedValue), upperBound)
         let formatted = String(format: "%d", Int(clamped))
         _value = State(initialValue: formatted)
 
-        let upperStr = String(format: "%d", Int(range.upperBound))
+        let upperStr = String(format: "%d", Int(upperBound))
         maxDigits = upperStr.count
     }
 
@@ -69,6 +69,7 @@ public struct NumberPad<T: BinaryInteger>: View {
                 }
                 HStack(spacing: horzSpace) {
                     Group {
+                        // clearValue
                         digit(nil)
                         digit(0)
                         backspace
@@ -90,11 +91,20 @@ public struct NumberPad<T: BinaryInteger>: View {
         .disabled(value.count >= maxDigits)
     }
 
+//    private var clearValue: some View {
+//        Button(action: clearAction) {
+//            Image(systemName: "xmark.circle.fill")
+//        }
+//        .buttonStyle(.plain)
+//        .disabled(value == "0")
+//    }
+
     private var backspace: some View {
         Button(action: backspaceAction) {
-            Image(systemName: "delete.backward")
+            Image(systemName: "delete.backward.fill")
         }
         .buttonStyle(.plain)
+        // .foregroundColor(.secondary)
         .disabled(value == "0")
     }
 
@@ -118,6 +128,12 @@ public struct NumberPad<T: BinaryInteger>: View {
         Haptics.play()
     }
 
+//    private func clearAction() {
+//       forceZero()
+//        refreshSelection()
+//        Haptics.play()
+//    }
+
     private func backspaceAction() {
         if value.count <= 1 {
             forceZero()
@@ -132,9 +148,9 @@ public struct NumberPad<T: BinaryInteger>: View {
 
     private func refreshSelection() {
         let intValue = Int(value) ?? 0
-        //TODO need to cap to range of T
-        //T.init(value, format: "%d", lenient: true)
-        selection = T(intValue).clamped(to: range)
+        let maxValue = Int(T.max)
+        selection = min(upperBound, T(min(maxValue, intValue)))
+        value = "\(selection)"
     }
 
     private func forceZero() {
@@ -144,11 +160,11 @@ public struct NumberPad<T: BinaryInteger>: View {
 
 struct NumberPad_Previews: PreviewProvider {
     struct TestHolder: View {
-        @State var value: Int16 = 23423
+        @State var value: Int16 = 2333
         var body: some View {
             VStack {
                 Text("\(value)")
-                NumberPad(selection: $value, range: 0 ... 30000)
+                NumberPad(selection: $value, upperBound: 30000)
                     .font(.title2)
             }
             .modify {
@@ -164,5 +180,6 @@ struct NumberPad_Previews: PreviewProvider {
     static var previews: some View {
         TestHolder()
             .accentColor(.orange)
+            .symbolRenderingMode(.hierarchical)
     }
 }
