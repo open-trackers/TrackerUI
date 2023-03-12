@@ -47,7 +47,8 @@ public struct ControlBarTabView<Content, Selection>: View
         .ignoresSafeArea(.all, edges: [.bottom]) // NOTE: allows control bar to be at bottom
         #if os(watchOS)
             .navigationTitle {
-                NavTitle(title, color: tint)
+                Text(title)
+                    .foregroundStyle(tint)
             }
         #elseif os(iOS)
             .navigationTitle(title)
