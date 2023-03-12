@@ -95,13 +95,25 @@ public struct NumberPad<T: FixedWidthInteger>: View {
     }
 
     private var backspace: some View {
-        Button(action: backspaceAction) {
+        Button(action: {}) {
             Image(systemName: "delete.backward.fill")
                 .imageScale(.large)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .disabled(value == "0")
         .buttonStyle(.plain)
+        .simultaneousGesture(
+            LongPressGesture()
+                .onEnded { _ in
+                    clearAction()
+                }
+        )
+        .highPriorityGesture(
+            TapGesture()
+                .onEnded { _ in
+                    backspaceAction()
+                }
+        )
     }
 
     // MARK: - Actions
@@ -124,11 +136,11 @@ public struct NumberPad<T: FixedWidthInteger>: View {
         Haptics.play()
     }
 
-//    private func clearAction() {
-//       forceZero()
-//        refreshSelection()
-//        Haptics.play()
-//    }
+    private func clearAction() {
+        forceZero()
+        refreshSelection()
+        Haptics.play()
+    }
 
     private func backspaceAction() {
         if value.count <= 1 {
