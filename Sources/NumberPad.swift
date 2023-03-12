@@ -11,20 +11,24 @@
 import SwiftUI
 
 public struct NumberPad: View {
-    @Binding private var value: String
+    @Binding private var selection: Int
     private let maxDigits: Int
 
     // MARK: - Parameters
 
-    public init(value: Binding<String>, maxDigits: Int = 9, locale _: Locale = .current) {
-        _value = value
+    public init(selection: Binding<Int>, maxDigits: Int = 9, locale _: Locale = .current) {
+        _selection = selection
         self.maxDigits = maxDigits
+
+        _value = State(initialValue: String(format: "%d", selection.wrappedValue))
     }
 
     // MARK: - Locals
 
-    public var horzSpace: CGFloat = 3
-    public var vertSpace: CGFloat = 3
+    @State private var value: String
+
+    private var horzSpace: CGFloat = 3
+    private var vertSpace: CGFloat = 3
 
     // MARK: - Views
 
@@ -72,15 +76,7 @@ public struct NumberPad: View {
     }
 
     private func digit(_ num: Int?) -> some View {
-        Button(action: {
-            guard let num else { return }
-            let strNum = "\(num)"
-            if value == "0" {
-                value = strNum
-            } else {
-                value.append("\(num)")
-            }
-        }) {
+        Button(action: { digitAction(num) }) {
             let str: String = num != nil ? "\(num!)" : ""
             Text(str)
         }
@@ -89,13 +85,7 @@ public struct NumberPad: View {
     }
 
     private var backspace: some View {
-        Button(action: {
-            if value.count <= 1 {
-                forceZero()
-            } else {
-                value.removeLast()
-            }
-        }) {
+        Button(action: backspaceAction) {
             Image(systemName: "delete.backward")
         }
         .buttonStyle(.plain)
@@ -110,6 +100,32 @@ public struct NumberPad: View {
         }
     }
 
+    private func digitAction(_ num: Int?) {
+        guard let num else { return }
+        let strNum = "\(num)"
+        if value == "0" {
+            value = strNum
+        } else {
+            value.append(strNum)
+        }
+        refreshSelection()
+    }
+
+    private func backspaceAction() {
+        if value.count <= 1 {
+            forceZero()
+        } else {
+            value.removeLast()
+        }
+        refreshSelection()
+    }
+
+    // MARK: - Helpers
+
+    private func refreshSelection() {
+        selection = Int(value) ?? 0
+    }
+
     private func forceZero() {
         value = "0"
     }
@@ -117,11 +133,11 @@ public struct NumberPad: View {
 
 struct NumberPad_Previews: PreviewProvider {
     struct TestHolder: View {
-        @State var value: String = ""
+        @State var value: Int = 23423
         var body: some View {
             VStack {
-                Text(value)
-                NumberPad(value: $value, maxDigits: 6)
+                Text("\(value)")
+                NumberPad(selection: $value, maxDigits: 6)
                     .font(.title2)
             }
             .modify {
