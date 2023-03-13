@@ -87,7 +87,7 @@ public struct CellList<Element, Cell, Add, ButtonArray>: View
             buttonArray()
                 .listItemTint(Color.accentColor.opacity(0.2))
                 .font(.title3)
-                .foregroundStyle(.tint)
+//                .foregroundStyle(.tint)
                 .symbolRenderingMode(.hierarchical)
         }
 
