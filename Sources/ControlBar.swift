@@ -33,8 +33,10 @@ public struct ControlBar<T>: View
             }) {
                 Image(systemName: "arrow.left.circle.fill")
             }
+            .padding(.trailing)
             .foregroundStyle(tint)
             .disabled(selection == first)
+            // .border(.red)
 
             Spacer()
 
@@ -49,7 +51,9 @@ public struct ControlBar<T>: View
                         $0.monospaced()
                     }
                 }
+                .padding(.horizontal)
                 .onTapGesture(perform: tapAction)
+            // .border(.red)
 
             Spacer()
 
@@ -60,14 +64,13 @@ public struct ControlBar<T>: View
             }) {
                 Image(systemName: "arrow.right.circle.fill")
             }
+            .padding(.leading)
             .foregroundStyle(tint)
             .disabled(selection == last)
+            // .border(.red)
         }
         .imageScale(.large)
-        // .padding(.horizontal, 20)
         .buttonStyle(.plain)
-        // .padding(.bottom)
-        // .frame(maxHeight: 20)
     }
 
     // MARK: - Properties
