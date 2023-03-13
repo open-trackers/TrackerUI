@@ -15,6 +15,8 @@ import TrackerLib
 public struct ValueStepper<T>: View
     where T: Numeric & Comparable & _FormatSpecifiable & Strideable
 {
+    // MARK: - Parameters
+
     @Binding private var value: T
     private let range: ClosedRange<T>
     private let step: T.Stride
@@ -22,6 +24,7 @@ public struct ValueStepper<T>: View
     private let ifZero: String?
     private let multiplier: T
     private let maxFontSize: CGFloat
+    private let forceFocus: Bool
 
     public init(value: Binding<T>,
                 in range: ClosedRange<T>,
@@ -29,7 +32,8 @@ public struct ValueStepper<T>: View
                 specifier: String,
                 ifZero: String? = nil,
                 multiplier: T = 1,
-                maxFontSize: CGFloat = 40)
+                maxFontSize: CGFloat = 40,
+                forceFocus: Bool = false)
     {
         _value = value
         self.range = range
@@ -38,7 +42,15 @@ public struct ValueStepper<T>: View
         self.ifZero = ifZero
         self.multiplier = multiplier
         self.maxFontSize = maxFontSize
+        self.forceFocus = forceFocus
     }
+
+    // MARK: - Locals
+
+    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
+    @FocusState private var focusedField: Bool
+
+    // MARK: - Views
 
     public var body: some View {
         Stepper(value: $value, in: range, step: step) {
@@ -55,6 +67,11 @@ public struct ValueStepper<T>: View
                     }
                 }
             #endif
+        }
+        .focused($focusedField)
+        .onAppear {
+            guard forceFocus else { return }
+            focusedField = true
         }
     }
 
