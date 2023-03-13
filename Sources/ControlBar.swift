@@ -45,6 +45,7 @@ public struct ControlBar<T>: View
 
             Text("\(selection.rawValue) of \(last.rawValue)")
                 .lineLimit(1)
+                .truncationMode(.middle)
                 .modify {
                     if #available(iOS 16.1, watchOS 9.1, *) {
                         $0.fontDesign(.monospaced)
@@ -52,7 +53,6 @@ public struct ControlBar<T>: View
                         $0.monospaced()
                     }
                 }
-//                .padding(.horizontal)
                 .onTapGesture(perform: tapAction)
             // .border(.red)
 
