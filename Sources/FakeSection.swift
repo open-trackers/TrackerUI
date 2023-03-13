@@ -16,7 +16,9 @@ import SwiftUI
         var title: String
         var content: () -> Content
 
-        public init(title: String, content: @escaping () -> Content) {
+        public init(title: String,
+                    @ViewBuilder content: @escaping () -> Content)
+        {
             self.title = title
             self.content = content
         }
