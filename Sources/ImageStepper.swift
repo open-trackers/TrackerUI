@@ -15,11 +15,17 @@ public struct ImageStepper: View {
 
     private var initialName: String?
     private var imageNames: [String]
+    private let forceFocus: Bool
     private var onSelect: (String) -> Void
 
-    public init(initialName: String? = nil, imageNames: [String], onSelect: @escaping (String) -> Void) {
+    public init(initialName: String? = nil,
+                imageNames: [String],
+                forceFocus: Bool = false,
+                onSelect: @escaping (String) -> Void)
+    {
         self.initialName = initialName
         self.imageNames = imageNames
+        self.forceFocus = forceFocus
         self.onSelect = onSelect
 
         let index = imageNames.firstIndex(where: { $0 == initialName }) ?? 0
@@ -29,6 +35,9 @@ public struct ImageStepper: View {
     // MARK: - Locals
 
     @State private var index: Int = 0
+
+    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
+    @FocusState private var focusedField: Bool
 
     // MARK: - Views
 
@@ -40,6 +49,11 @@ public struct ImageStepper: View {
         }
         .symbolRenderingMode(.hierarchical)
         .frame(height: 65)
+        .focused($focusedField)
+        .onAppear {
+            guard forceFocus else { return }
+            focusedField = true
+        }
     }
 }
 
