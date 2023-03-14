@@ -33,7 +33,7 @@ public struct ControlBar<T>: View
             }) {
                 Image(systemName: "arrow.left.circle.fill")
             }
-            .padding(.trailing, 5)
+            .padding(.horizontal, 15)
             .foregroundStyle(tint)
             .disabled(selection == first)
             // .border(.red)
@@ -43,17 +43,20 @@ public struct ControlBar<T>: View
             // Capsule(style: .circular)
             //     .fill(tint)
 
-            Text("\(selection.rawValue) of \(last.rawValue)")
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .modify {
-                    if #available(iOS 16.1, watchOS 9.1, *) {
-                        $0.fontDesign(.monospaced)
-                    } else {
-                        $0.monospaced()
+            Button(action: tapAction) {
+                Text("\(selection.rawValue)/\(last.rawValue)")
+                    .lineLimit(1)
+//                .truncationMode(.middle)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 1.5)
+                    .modify {
+                        if #available(iOS 16.1, watchOS 9.1, *) {
+                            $0.fontDesign(.monospaced)
+                        } else {
+                            $0.monospaced()
+                        }
                     }
-                }
-                .onTapGesture(perform: tapAction)
+            }
             // .border(.red)
 
             Spacer()
@@ -65,7 +68,7 @@ public struct ControlBar<T>: View
             }) {
                 Image(systemName: "arrow.right.circle.fill")
             }
-            .padding(.leading, 5)
+            .padding(.horizontal, 15)
             .foregroundStyle(tint)
             .disabled(selection == last)
             // .border(.red)

@@ -42,7 +42,7 @@ public struct ControlBarTabView<Content, T>: View
             .frame(maxHeight: .infinity)
 
             ControlBar(selection: $selection, tint: tint)
-                .padding(.horizontal, 20)
+                // .padding(.horizontal, 20)
                 .padding(.bottom)
         }
         .ignoresSafeArea(.all, edges: [.bottom]) // NOTE: allows control bar to be at bottom
