@@ -56,6 +56,11 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
             TextField(text: $title,
                       prompt: Text(prompt),
                       axis: .vertical) { EmptyView() }
+            #if os(iOS)
+                .lineLimit(5)
+            #endif
+//                .truncationMode(.middle)
+//                .textInputAutocapitalization(.sentences)
 
             Button(action: {
                 showPresetNames = true
@@ -97,7 +102,7 @@ struct TextFieldWithPresets_Previews: PreviewProvider {
                 "Jumping-jack",
             ],
         ]
-        @State var name: String = "Back & Bicep and many other things"
+        @State var name: String = "Back & Bicep and many other things and other things"
         var body: some View {
             Form {
                 TextFieldWithPresets($name, prompt: "Enter name", presets: presets) { _, _ in
