@@ -72,7 +72,7 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
             }
             .buttonStyle(.borderless)
         }
-        .font(.title3)
+        .font(.title3) // TODO: this should be styled at higher level
         .sheet(isPresented: $showPresetNames) {
             NavigationStack {
                 PresetsPicker(presets: presets,

@@ -84,11 +84,9 @@ public struct CellList<Element, Cell, Add, ButtonArray>: View
             .onMove(perform: moveAction)
             // .onDelete(perform: deleteAction)
 
+            // NOTE: assumes buttons have been styled
             buttonArray()
                 .listItemTint(Color.accentColor.opacity(0.2))
-                .font(.title3)
-//                .foregroundStyle(.tint)
-                .symbolRenderingMode(.hierarchical)
         }
 
         #if os(watchOS)
