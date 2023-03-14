@@ -12,7 +12,7 @@ let package = Package(name: "TrackerUI",
                           .package(url: "https://github.com/openalloc/SwiftCompactor", from: "1.3.0"),
                           .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
                           .package(url: "https://github.com/open-trackers/TrackerLib.git", from: "1.0.0"),
-                         // .package(path: "../TrackerNumPad")
+                          // .package(path: "../SwiftNumberPad")
                       ],
                       targets: [
                           .target(name: "TrackerUI",
@@ -20,7 +20,7 @@ let package = Package(name: "TrackerUI",
                                       .product(name: "Compactor", package: "SwiftCompactor"),
                                       .product(name: "Collections", package: "swift-collections"),
                                       .product(name: "TrackerLib", package: "TrackerLib"),
-                                      //.product(name: "TrackerNumPad", package: "TrackerNumPad"),
+                                      // .product(name: "SwiftNumberPad", package: "SwiftNumberPad"),
                                   ],
                                   path: "Sources"),
                           .testTarget(name: "TrackerUITests",
