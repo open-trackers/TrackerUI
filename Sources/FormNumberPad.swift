@@ -18,16 +18,13 @@ public struct FormIntPad<Label, T>: View
 {
     // MARK: - Parameters
 
-    private let title: String
     @Binding private var selection: T
     private let label: (T) -> Label
 
-    public init(title: String,
-                selection: Binding<T>,
+    public init(selection: Binding<T>,
                 upperBound: T,
                 label: @escaping (T) -> Label)
     {
-        self.title = title
         _selection = selection
         self.label = label
 
@@ -37,22 +34,18 @@ public struct FormIntPad<Label, T>: View
     // MARK: - Locals
 
     @State private var showSheet = false
-    var padSelection: NumPadInt<T>
+    @ObservedObject var padSelection: NumPadInt<T>
 
     // MARK: - Views
 
     public var body: some View {
-        Section {
-            HStack {
-                label(selection)
-                Spacer()
-                Button(action: { showSheet = true }) {
-                    Image(systemName: "square.grid.2x2")
-                }
-                .foregroundStyle(.tint)
+        HStack {
+            label(selection)
+            Spacer()
+            Button(action: { showSheet = true }) {
+                Image(systemName: "square.grid.2x2")
             }
-        } header: {
-            Text(title)
+            .foregroundStyle(.tint)
         }
         .sheet(isPresented: $showSheet) {
             NavigationStack {
@@ -87,41 +80,37 @@ public struct FormFloatPad<Label, T>: View
 {
     // MARK: - Parameters
 
-    private let title: String
     @Binding private var selection: T
     private let label: (T) -> Label
 
-    public init(title: String,
-                selection: Binding<T>,
+    public init(selection: Binding<T>,
+                precision: Int,
                 upperBound: T,
                 label: @escaping (T) -> Label)
     {
-        self.title = title
         _selection = selection
         self.label = label
 
-        padSelection = .init(selection.wrappedValue, upperBound: upperBound)
+        padSelection = .init(selection.wrappedValue,
+                             precision: precision,
+                             upperBound: upperBound)
     }
 
     // MARK: - Locals
 
     @State private var showSheet = false
-    var padSelection: NumPadFloat<T>
+    @ObservedObject var padSelection: NumPadFloat<T>
 
     // MARK: - Views
 
     public var body: some View {
-        Section {
-            HStack {
-                label(selection)
-                Spacer()
-                Button(action: { showSheet = true }) {
-                    Image(systemName: "square.grid.2x2")
-                }
-                .foregroundStyle(.tint)
+        HStack {
+            label(selection)
+            Spacer()
+            Button(action: { showSheet = true }) {
+                Image(systemName: "square.grid.2x2")
             }
-        } header: {
-            Text(title)
+            .foregroundStyle(.tint)
         }
         .sheet(isPresented: $showSheet) {
             NavigationStack {
@@ -189,14 +178,20 @@ private struct IntPadSheet<T>: View
     #if os(iOS)
         private var platformView: some View {
             VStack {
-                Text("\(selection.stringValue)")
-                    .foregroundColor(selectionColor)
-                NumberPad(selection: selection, showDecimalPoint: false)
-                    .buttonStyle(.bordered)
-                    .foregroundStyle(Color.primary) // NOTE: colors the backspace too
-                    .frame(maxWidth: 300, maxHeight: 400)
+                Group {
+                    Text("\(selection.stringValue)")
+                        .foregroundColor(selectionColor)
+                    NumberPad(selection: selection, showDecimalPoint: false)
+                        .buttonStyle(.bordered)
+                        .foregroundStyle(Color.primary) // NOTE: colors the backspace too
+                        .frame(maxWidth: 300, maxHeight: 400)
+                }
+                .font(.largeTitle)
+                Spacer()
+                Text("Enter a value up to \(Int(selection.upperBound))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-            .font(.largeTitle)
         }
 
         private var selectionColor: Color {
@@ -244,14 +239,20 @@ private struct FloatPadSheet<T>: View
     #if os(iOS)
         private var platformView: some View {
             VStack {
-                Text("\(selection.stringValue)")
-                    .foregroundColor(selectionColor)
-                NumberPad(selection: selection, showDecimalPoint: true)
-                    .buttonStyle(.bordered)
-                    .foregroundStyle(Color.primary) // NOTE: colors the backspace too
-                    .frame(maxWidth: 300, maxHeight: 400)
+                Group {
+                    Text("\(selection.stringValue)")
+                        .foregroundColor(selectionColor)
+                    NumberPad(selection: selection, showDecimalPoint: true)
+                        .buttonStyle(.bordered)
+                        .foregroundStyle(Color.primary) // NOTE: colors the backspace too
+                        .frame(maxWidth: 300, maxHeight: 400)
+                }
+                .font(.largeTitle)
+                Spacer()
+                Text("Enter a value up to \(Int(selection.upperBound))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-            .font(.largeTitle)
         }
 
         private var selectionColor: Color {
@@ -266,10 +267,10 @@ struct FormIntPad_Previews: PreviewProvider {
         @State var floatValue: Float = 23.4
         var body: some View {
             Form {
-                FormIntPad(title: "Calories", selection: $intValue, upperBound: 30000) {
+                FormIntPad(selection: $intValue, upperBound: 30000) {
                     Text("\($0) cal")
                 }
-                FormFloatPad(title: "Volume", selection: $floatValue, upperBound: 500) {
+                FormFloatPad(selection: $floatValue, precision: 1, upperBound: 5000) {
                     Text("\($0, specifier: "%0.1f") mL")
                 }
             }

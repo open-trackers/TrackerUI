@@ -32,7 +32,7 @@ public struct ValueStepper<T>: View
                 specifier: String,
                 ifZero: String? = nil,
                 multiplier: T = 1,
-                maxFontSize: CGFloat = 28,
+                maxFontSize: CGFloat = 24,
                 forceFocus: Bool = false)
     {
         _value = value
