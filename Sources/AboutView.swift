@@ -85,6 +85,7 @@ public struct AboutView<IconImage>: View
             }
             .multilineTextAlignment(.center) // NOTE: to center the copyright on watch
         }
+        .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("About")
     }
 
