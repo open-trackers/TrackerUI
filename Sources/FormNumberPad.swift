@@ -1,7 +1,7 @@
 //
 //  FormNumberPad.swift
 //
-// Copyright 2022, 2023  OpenAlloc LLC
+// Copyright 2023  OpenAlloc LLC
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,100 +12,96 @@ import SwiftUI
 
 import NumberPad
 
-public struct FormIntPad<Label, T>: View
-    where Label: View,
-    T: FixedWidthInteger
+public struct FormIntegerPad<T, Label>: View
+    where T: FixedWidthInteger & Comparable,
+    Label: View
 {
-    // MARK: - Parameters
+    @Binding private var value: T
+    private let upperBound: T
+    private let label: (T?) -> Label
 
-    @Binding private var selection: T
-    private let label: (T) -> Label
-
-    public init(selection: Binding<T>,
+    public init(value: Binding<T>,
                 upperBound: T,
-                label: @escaping (T) -> Label)
+                label: @escaping (T?) -> Label)
     {
-        _selection = selection
+        _value = value
+        self.upperBound = upperBound
         self.label = label
 
-        padSelection = .init(selection.wrappedValue, upperBound: upperBound)
+        config = NPIntegerConfig(value.wrappedValue, upperBound: upperBound)
     }
 
-    // MARK: - Locals
-
-    @State private var showSheet = false
-    @ObservedObject var padSelection: NumPadInt<T>
-
-    // MARK: - Views
+    @ObservedObject private var config: NPIntegerConfig<T>
 
     public var body: some View {
-        HStack {
-            label(selection)
-            Spacer()
-            Button(action: { showSheet = true }) {
-                Image(systemName: "square.grid.2x2")
-            }
-            .foregroundStyle(.tint)
-        }
-        .sheet(isPresented: $showSheet) {
-            NavigationStack {
-                IntPadSheet(selection: padSelection)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button(action: {
-                                if let nu = padSelection.value {
-                                    selection = nu
-                                }
-                                showSheet = false
-                            }) {
-                                Text("Save")
-                            }
-                        }
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button(action: {
-                                showSheet = false
-                            }) {
-                                Text("Cancel")
-                            }
-                        }
-                    }
-            }
-        }
+        FormNumberPad(value: $value, config: config, showDecimalPoint: false, label: label)
     }
 }
 
-public struct FormFloatPad<Label, T>: View
-    where Label: View,
-    T: BinaryFloatingPoint
+public struct FormFloatPad<T, Label>: View
+    where T: BinaryFloatingPoint & Comparable,
+    Label: View
 {
-    // MARK: - Parameters
+    @Binding private var value: T
+    private let precision: Int
+    private let upperBound: T
+    private let label: (T?) -> Label
 
-    @Binding private var selection: T
-    private let label: (T) -> Label
-
-    public init(selection: Binding<T>,
+    public init(value: Binding<T>,
                 precision: Int,
                 upperBound: T,
-                label: @escaping (T) -> Label)
+                label: @escaping (T?) -> Label)
     {
-        _selection = selection
+        _value = value
+        self.precision = precision
+        self.upperBound = upperBound
         self.label = label
 
-        padSelection = .init(selection.wrappedValue,
-                             precision: precision,
-                             upperBound: upperBound)
+        config = NPFloatConfig(value.wrappedValue, precision: precision, upperBound: upperBound)
+    }
+
+    @ObservedObject private var config: NPFloatConfig<T>
+
+    public var body: some View {
+        FormNumberPad(value: $value, config: config, showDecimalPoint: true, label: label)
+    }
+}
+
+private struct FormNumberPad<Label, N, T, Footer>: View
+    where Label: View,
+    N: NPBaseConfig<T>,
+    Footer: View
+{
+    // MARK: - Parameters
+
+    @Binding private var value: T
+    private let config: NPBaseConfig<T>
+    private let showDecimalPoint: Bool
+    private let label: (T?) -> Label
+    private let footer: () -> Footer
+
+    init(value: Binding<T>,
+         config: NPBaseConfig<T>,
+         showDecimalPoint: Bool,
+         label: @escaping (T?) -> Label,
+         footer: @escaping () -> Footer = { EmptyView() })
+    {
+        _value = value
+        self.config = config
+        self.showDecimalPoint = showDecimalPoint
+        self.label = label
+        self.footer = footer
     }
 
     // MARK: - Locals
 
     @State private var showSheet = false
-    @ObservedObject var padSelection: NumPadFloat<T>
 
     // MARK: - Views
 
-    public var body: some View {
+    var body: some View {
         HStack {
-            label(selection)
+            label(config.value)
             Spacer()
             Button(action: { showSheet = true }) {
                 Image(systemName: "square.grid.2x2")
@@ -114,12 +110,12 @@ public struct FormFloatPad<Label, T>: View
         }
         .sheet(isPresented: $showSheet) {
             NavigationStack {
-                FloatPadSheet(selection: padSelection)
+                PadSheet(config: config, showDecimalPoint: showDecimalPoint, footer: footer)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(action: {
-                                if let nu = padSelection.value {
-                                    selection = nu
+                                if let nu = config.value {
+                                    value = nu
                                 }
                                 showSheet = false
                             }) {
@@ -139,12 +135,11 @@ public struct FormFloatPad<Label, T>: View
     }
 }
 
-// TODO: try to refactor this with FloatPadSheet, where selection is a NumPadBase and showDecimalPoint a parameter
-private struct IntPadSheet<T>: View
-    where T: FixedWidthInteger
-{
+private struct PadSheet<T, Footer: View>: View where T: Comparable {
     @Environment(\.colorScheme) private var colorScheme
-    @ObservedObject var selection: NumPadInt<T>
+    @ObservedObject var config: NPBaseConfig<T>
+    let showDecimalPoint: Bool
+    let footer: () -> Footer
 
     let darkTitleColor: Color = .yellow
 
@@ -157,9 +152,9 @@ private struct IntPadSheet<T>: View
         private var platformView: some View {
             GeometryReader { _ in
                 VStack(spacing: 3) {
-                    Text("\(selection.stringValue)")
+                    Text("\(config.stringValue)")
                         .foregroundColor(darkTitleColor)
-                    NumberPad(selection: selection, showDecimalPoint: false)
+                    NumberPad(config: config, showDecimalPoint: showDecimalPoint)
                         .buttonStyle(.plain)
                         .modify {
                             if #available(iOS 16.1, watchOS 9.1, *) {
@@ -179,18 +174,16 @@ private struct IntPadSheet<T>: View
         private var platformView: some View {
             VStack {
                 Group {
-                    Text("\(selection.stringValue)")
+                    Text("\(config.stringValue)")
                         .foregroundColor(selectionColor)
-                    NumberPad(selection: selection, showDecimalPoint: false)
+                    NumberPad(config: config, showDecimalPoint: showDecimalPoint)
                         .buttonStyle(.bordered)
                         .foregroundStyle(Color.primary) // NOTE: colors the backspace too
                         .frame(maxWidth: 300, maxHeight: 400)
                 }
                 .font(.largeTitle)
                 Spacer()
-                Text("Enter a value up to \(Int(selection.upperBound))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                footer()
             }
         }
 
@@ -200,78 +193,33 @@ private struct IntPadSheet<T>: View
     #endif
 }
 
-// TODO: try to refactor this with IntPadSheet, where selection is a NumPadBase and showDecimalPoint a parameter
-private struct FloatPadSheet<T>: View
-    where T: BinaryFloatingPoint
-{
-    @Environment(\.colorScheme) private var colorScheme
-    @ObservedObject var selection: NumPadFloat<T>
-
-    let darkTitleColor: Color = .yellow
-
-    var body: some View {
-        platformView
-            .symbolRenderingMode(.hierarchical)
-    }
-
-    #if os(watchOS)
-        private var platformView: some View {
-            GeometryReader { _ in
-                VStack(spacing: 3) {
-                    Text("\(selection.stringValue)")
-                        .foregroundColor(darkTitleColor)
-                    NumberPad(selection: selection, showDecimalPoint: true)
-                        .buttonStyle(.plain)
-                        .modify {
-                            if #available(iOS 16.1, watchOS 9.1, *) {
-                                $0.fontDesign(.monospaced)
-                            } else {
-                                $0.monospaced()
-                            }
-                        }
-                }
-                .font(.title2)
-            }
-            .ignoresSafeArea(.all, edges: [.bottom])
-        }
-    #endif
-
-    #if os(iOS)
-        private var platformView: some View {
-            VStack {
-                Group {
-                    Text("\(selection.stringValue)")
-                        .foregroundColor(selectionColor)
-                    NumberPad(selection: selection, showDecimalPoint: true)
-                        .buttonStyle(.bordered)
-                        .foregroundStyle(Color.primary) // NOTE: colors the backspace too
-                        .frame(maxWidth: 300, maxHeight: 400)
-                }
-                .font(.largeTitle)
-                Spacer()
-                Text("Enter a value up to \(Int(selection.upperBound))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-        }
-
-        private var selectionColor: Color {
-            colorScheme == .light ? .primary : darkTitleColor
-        }
-    #endif
-}
-
-struct FormIntPad_Previews: PreviewProvider {
+struct FormNumberPad_Previews: PreviewProvider {
     struct TestHolder: View {
         @State var intValue: Int16 = 6222
         @State var floatValue: Float = 23.4
+        var intConfig: NPIntegerConfig<Int16> { NPIntegerConfig(intValue, upperBound: 30000) }
+        var floatConfig: NPFloatConfig<Float> { NPFloatConfig(floatValue, precision: 1, upperBound: 5000) }
         var body: some View {
             Form {
-                FormIntPad(selection: $intValue, upperBound: 30000) {
-                    Text("\($0) cal")
+                FormNumberPad(value: $intValue,
+                              config: intConfig,
+                              showDecimalPoint: false)
+                {
+                    Text("\($0 ?? 0) cal")
+                } footer: {
+                    Text("Enter a value up to \(intConfig.upperBound)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
-                FormFloatPad(selection: $floatValue, precision: 1, upperBound: 5000) {
-                    Text("\($0, specifier: "%0.1f") mL")
+                FormNumberPad(value: $floatValue,
+                              config: floatConfig,
+                              showDecimalPoint: true)
+                {
+                    Text("\($0 ?? 0, specifier: "%0.1f") mL")
+                } footer: {
+                    Text("Enter a value up to \(floatConfig.upperBound)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
             .padding()
