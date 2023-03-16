@@ -34,7 +34,7 @@ public struct FormIntegerPad<T, Label>: View
     @ObservedObject private var config: NPIntegerConfig<T>
 
     public var body: some View {
-        FormNumberPad(value: $value, config: config, showDecimalPoint: false, label: label)
+        FormNumberPad(value: $value, config: config, label: label)
     }
 }
 
@@ -63,7 +63,7 @@ public struct FormFloatPad<T, Label>: View
     @ObservedObject private var config: NPFloatConfig<T>
 
     public var body: some View {
-        FormNumberPad(value: $value, config: config, showDecimalPoint: true, label: label)
+        FormNumberPad(value: $value, config: config, label: label)
     }
 }
 
@@ -76,19 +76,16 @@ private struct FormNumberPad<Label, N, T, Footer>: View
 
     @Binding private var value: T
     private let config: NPBaseConfig<T>
-    private let showDecimalPoint: Bool
     private let label: (T?) -> Label
     private let footer: () -> Footer
 
     init(value: Binding<T>,
          config: NPBaseConfig<T>,
-         showDecimalPoint: Bool,
          label: @escaping (T?) -> Label,
          footer: @escaping () -> Footer = { EmptyView() })
     {
         _value = value
         self.config = config
-        self.showDecimalPoint = showDecimalPoint
         self.label = label
         self.footer = footer
     }
@@ -110,7 +107,7 @@ private struct FormNumberPad<Label, N, T, Footer>: View
         }
         .sheet(isPresented: $showSheet) {
             NavigationStack {
-                PadSheet(config: config, showDecimalPoint: showDecimalPoint, footer: footer)
+                PadSheet(config: config, footer: footer)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(action: {
@@ -138,7 +135,6 @@ private struct FormNumberPad<Label, N, T, Footer>: View
 private struct PadSheet<T, Footer: View>: View where T: Comparable {
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var config: NPBaseConfig<T>
-    let showDecimalPoint: Bool
     let footer: () -> Footer
 
     let darkTitleColor: Color = .yellow
@@ -154,7 +150,7 @@ private struct PadSheet<T, Footer: View>: View where T: Comparable {
                 VStack(spacing: 3) {
                     Text("\(config.stringValue)")
                         .foregroundColor(darkTitleColor)
-                    NumberPad(config: config, showDecimalPoint: showDecimalPoint)
+                    NumberPad(config: config)
                         .buttonStyle(.plain)
                         .modify {
                             if #available(iOS 16.1, watchOS 9.1, *) {
@@ -176,7 +172,7 @@ private struct PadSheet<T, Footer: View>: View where T: Comparable {
                 Group {
                     Text("\(config.stringValue)")
                         .foregroundColor(selectionColor)
-                    NumberPad(config: config, showDecimalPoint: showDecimalPoint)
+                    NumberPad(config: config)
                         .buttonStyle(.bordered)
                         .foregroundStyle(Color.primary) // NOTE: colors the backspace too
                         .frame(maxWidth: 300, maxHeight: 400)
@@ -202,8 +198,7 @@ struct FormNumberPad_Previews: PreviewProvider {
         var body: some View {
             Form {
                 FormNumberPad(value: $intValue,
-                              config: intConfig,
-                              showDecimalPoint: false)
+                              config: intConfig)
                 {
                     Text("\($0 ?? 0) cal")
                 } footer: {
@@ -212,8 +207,7 @@ struct FormNumberPad_Previews: PreviewProvider {
                         .foregroundColor(.secondary)
                 }
                 FormNumberPad(value: $floatValue,
-                              config: floatConfig,
-                              showDecimalPoint: true)
+                              config: floatConfig)
                 {
                     Text("\($0 ?? 0, specifier: "%0.1f") mL")
                 } footer: {
