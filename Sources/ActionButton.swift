@@ -16,18 +16,21 @@ public struct ActionButton: View {
     private let onShortPress: () -> Void
     private let imageSystemName: String // "arrow.backward"
     private let buttonText: String? // "Previous"
+    private let labelFont: Font
     private let tint: Color
     private let onLongPress: (() -> Void)?
 
     public init(onShortPress: @escaping () -> Void,
                 imageSystemName: String,
                 buttonText: String? = nil,
+                labelFont: Font = .body,
                 tint: Color,
                 onLongPress: (() -> Void)? = nil)
     {
         self.onShortPress = onShortPress
         self.imageSystemName = imageSystemName
         self.buttonText = buttonText
+        self.labelFont = labelFont
         self.tint = tint
         self.onLongPress = onLongPress
     }
@@ -46,6 +49,7 @@ public struct ActionButton: View {
 
             if let buttonText {
                 Text(buttonText)
+                    .font(labelFont)
                     .lineLimit(1)
             }
         }
@@ -70,15 +74,12 @@ public struct ActionButton: View {
     }
 
     private var label: some View {
-        #if os(watchOS)
-            Image(systemName: imageSystemName)
-                .symbolRenderingMode(.hierarchical)
-        #elseif os(iOS)
-            Image(systemName: imageSystemName)
-                .symbolRenderingMode(.hierarchical)
-                .resizable()
-                .scaledToFit()
-                .scaleEffect(imageScaleFactor)
+        Image(systemName: imageSystemName)
+            .symbolRenderingMode(.hierarchical)
+        #if os(iOS)
+            .resizable()
+            .scaledToFit()
+            .scaleEffect(imageScaleFactor)
         #endif
     }
 
@@ -115,7 +116,7 @@ public struct ActionButton: View {
 struct ActionButton_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            ActionButton(onShortPress: {}, imageSystemName: "arrow.backward", buttonText: "Previous", tint: .green)
+            ActionButton(onShortPress: {}, imageSystemName: "arrow.backward", buttonText: "Previous", labelFont: .title2, tint: .green)
                 .frame(width: 300, height: 200)
             ActionButton(onShortPress: {}, imageSystemName: "checkmark", buttonText: "Done", tint: .blue)
                 .frame(width: 300, height: 200)
