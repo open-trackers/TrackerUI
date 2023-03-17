@@ -16,23 +16,24 @@ public struct TitleText: View {
     private let text: String
     private let fontWeight: Font.Weight
     private let maxFontSize: CGFloat
+    private let minScaleFactor: CGFloat
 
     public init(_ text: String,
                 fontWeight: Font.Weight = .medium,
-                maxFontSize: CGFloat = 40)
+                maxFontSize: CGFloat = 40,
+                minScaleFactor: CGFloat = 0.3) // no smaller than 30% of maxFontSize
     {
         self.text = text
         self.fontWeight = fontWeight
         self.maxFontSize = maxFontSize
+        self.minScaleFactor = minScaleFactor
     }
 
     public var body: some View {
         Text(text)
             .font(.system(size: maxFontSize))
-            .minimumScaleFactor(0.1)
+            .minimumScaleFactor(minScaleFactor)
             .fontWeight(fontWeight)
-            // .shadow(color: shadowColor, radius: 0.5, x: 0.5, y: 0.5)
-            .allowsTightening(true)
             .lineLimit(1)
     }
 
