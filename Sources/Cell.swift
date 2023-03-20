@@ -30,6 +30,7 @@ public struct Cell<Element, Subtitle>: View
     // MARK: - Parameters
 
     private let element: Element
+    private let statusImageName: String?
     @Binding private var now: Date
     private let defaultImageName: String
     private let subtitle: () -> Subtitle
@@ -37,6 +38,7 @@ public struct Cell<Element, Subtitle>: View
     private let onShortPress: () -> Void
 
     public init(element: Element,
+                statusImageName: String? = nil,
                 now: Binding<Date>,
                 defaultImageName: String,
                 subtitle: @escaping () -> Subtitle,
@@ -44,6 +46,7 @@ public struct Cell<Element, Subtitle>: View
                 onShortPress: @escaping () -> Void)
     {
         self.element = element
+        self.statusImageName = statusImageName
         _now = now
         self.defaultImageName = defaultImageName
         self.subtitle = subtitle
@@ -84,15 +87,20 @@ public struct Cell<Element, Subtitle>: View
     }
 
     private func topRow(width: CGFloat) -> some View {
-        HStack {
+        HStack(spacing: 0) {
             ImageButton(systemName: element.imageName ?? defaultImageName, alignment: .leading, onShortPress: onShortPress)
-//                .padding(.leading, 5)
-                .frame(width: width * 0.67)
+                .frame(width: width * (statusImageName == nil ? 2 : 1) / 3)
             // .border(.white)
+
+            if let statusImageName {
+                ImageButton(systemName: statusImageName, alignment: .center, onShortPress: onShortPress)
+                    .frame(width: width * 1 / 3)
+                // .border(.gray)
+            }
 
             ImageButton(systemName: "ellipsis", alignment: .trailing, onShortPress: onDetail)
                 .padding(.trailing, 5)
-                .frame(width: width * 0.33)
+                .frame(width: width * 1 / 3)
                 .fontWeight(.bold)
             // .border(.white)
         }
