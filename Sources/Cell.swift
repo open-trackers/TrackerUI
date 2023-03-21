@@ -94,6 +94,7 @@ public struct Cell<Element, Subtitle>: View
 
             if let statusImageName {
                 ImageButton(systemName: statusImageName, alignment: .center, onShortPress: onShortPress)
+                    // .imageScale(.large)
                     .frame(width: width * 1 / 3)
                 // .border(.gray)
             }

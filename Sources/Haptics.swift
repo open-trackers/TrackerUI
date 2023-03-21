@@ -74,7 +74,7 @@ public struct Haptics {
             case .startingAction:
                 device.play(.start)
             case .stoppingAction:
-                device.play(.stopRun)
+                device.play(.stop)
             case .completedAction:
                 device.play(.success)
             case .click:
