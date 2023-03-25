@@ -10,5 +10,4 @@
 
 import Foundation
 
-public let colorSchemeModeKey = "colorScheme"
 public let exportFormatKey = "exportFormat"

@@ -1,5 +1,5 @@
 //
-//  ColorSchemeSettings.swift
+//  ColorSchemePicker.swift
 //
 // Copyright 2023  OpenAlloc LLC
 //
@@ -13,10 +13,9 @@
 
     import SwiftUI
 
-    // import GroutLib
-    // import GroutUI
+    public let colorSchemeModeKey = "colorScheme"
 
-    public struct ColorSchemeSettings: View {
+    public struct ColorSchemePicker: View {
         public init() {}
 
         // MARK: - Locals
@@ -40,10 +39,10 @@
         }
     }
 
-    struct ColorSchemeSettings_Previews: PreviewProvider {
+    struct ColorSchemePicker_Previews: PreviewProvider {
         static var previews: some View {
             Form {
-                ColorSchemeSettings()
+                ColorSchemePicker()
             }
         }
     }

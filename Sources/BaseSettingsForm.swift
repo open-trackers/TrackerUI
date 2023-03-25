@@ -44,7 +44,7 @@ public struct BaseSettingsForm<Content: View>: View {
             content()
 
             #if os(iOS)
-                ColorSchemeSettings()
+                ColorSchemePicker()
             #endif
 
             #if os(watchOS)
