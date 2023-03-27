@@ -102,6 +102,7 @@ private struct FormNumberPad<Label, N, T, Footer>: View
             Spacer()
             Button(action: { showSheet = true }) {
                 Image(systemName: "square.grid.2x2")
+                    .padding(.leading)
             }
             .foregroundStyle(.tint)
         }
