@@ -13,12 +13,23 @@ import SwiftUI
 public struct TitleText: View {
     @Environment(\.colorScheme) private var colorScheme
 
-    private let text: String
+    private let text: Text
     private let fontWeight: Font.Weight
     private let maxFontSize: CGFloat
     private let minScaleFactor: CGFloat
 
-    public init(_ text: String,
+    public init(_ strText: String,
+                fontWeight: Font.Weight = .medium,
+                maxFontSize: CGFloat = 40,
+                minScaleFactor: CGFloat = 0.3) // no smaller than 30% of maxFontSize
+    {
+        self.init(Text(strText),
+                  fontWeight: fontWeight,
+                  maxFontSize: maxFontSize,
+                  minScaleFactor: minScaleFactor)
+    }
+
+    public init(_ text: Text,
                 fontWeight: Font.Weight = .medium,
                 maxFontSize: CGFloat = 40,
                 minScaleFactor: CGFloat = 0.3) // no smaller than 30% of maxFontSize
@@ -30,7 +41,7 @@ public struct TitleText: View {
     }
 
     public var body: some View {
-        Text(text)
+        text
             .font(.system(size: maxFontSize))
             .minimumScaleFactor(minScaleFactor)
             .fontWeight(fontWeight)
