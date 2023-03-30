@@ -151,15 +151,17 @@ private struct PadSheet<T, Footer: View>: View where T: Comparable {
                 VStack(spacing: 3) {
                     Text("\(config.stringValue)")
                         .foregroundColor(darkTitleColor)
-                    NumberPad(config: config)
-                        .buttonStyle(.plain)
-                        .modify {
-                            if #available(iOS 16.1, watchOS 9.1, *) {
-                                $0.fontDesign(.monospaced)
-                            } else {
-                                $0.monospaced()
-                            }
+                    NumberPad(config: config) { _, _ in
+                        Haptics.play()
+                    }
+                    .buttonStyle(.plain)
+                    .modify {
+                        if #available(iOS 16.1, watchOS 9.1, *) {
+                            $0.fontDesign(.monospaced)
+                        } else {
+                            $0.monospaced()
                         }
+                    }
                 }
                 .font(.title2)
             }
@@ -173,10 +175,12 @@ private struct PadSheet<T, Footer: View>: View where T: Comparable {
                 Group {
                     Text("\(config.stringValue)")
                         .foregroundColor(selectionColor)
-                    NumberPad(config: config)
-                        .buttonStyle(.bordered)
-                        .foregroundStyle(Color.primary) // NOTE: colors the backspace too
-                        .frame(maxWidth: 300, maxHeight: 400)
+                    NumberPad(config: config) { _, _ in
+                        Haptics.play()
+                    }
+                    .buttonStyle(.bordered)
+                    .foregroundStyle(Color.primary) // NOTE: colors the backspace too
+                    .frame(maxWidth: 300, maxHeight: 400)
                 }
                 .font(.largeTitle)
                 Spacer()
