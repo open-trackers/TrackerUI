@@ -15,7 +15,9 @@ import SwiftUI
 import TrackerLib
 
 public struct PresetsPicker<Key, NamedValue, Label>: View
-    where Key: Hashable & CustomStringConvertible, NamedValue: Hashable & NameablePreset, Label: View
+    where Key: Hashable & CustomStringConvertible,
+    NamedValue: Hashable & NameablePreset,
+    Label: View
 {
     public typealias PresetsDictionary = OrderedDictionary<Key, [NamedValue]>
     // [String: [NamedValue]]

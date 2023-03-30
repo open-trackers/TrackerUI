@@ -13,6 +13,7 @@ import SwiftUI
 
 import TrackerLib
 
+/// NOTE: that Label.description is used for display in the list.
 public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
     where PresetGroupKey: Hashable & CustomStringConvertible,
     NamedValue: Hashable & NameablePreset,
@@ -72,7 +73,6 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
             }
             .buttonStyle(.borderless)
         }
-        // .font(.title3) // TODO: this should be styled at higher level
         .sheet(isPresented: $showPresetNames) {
             NavigationStack {
                 PresetsPicker(presets: presets,
@@ -88,6 +88,15 @@ public struct TextFieldWithPresets<PresetGroupKey, NamedValue, Label>: View
             .interactiveDismissDisabled() // NOTE: needed to prevent home button from dismissing sheet
         }
     }
+
+//    @ViewBuilder
+//    private func netLabel(_ namedValue: NamedValue) -> some View {
+//        if let label {
+//            label(namedValue)
+//        } else {
+//            Text(namedValue.description)
+//        }
+//    }
 }
 
 struct TextFieldWithPresets_Previews: PreviewProvider {
