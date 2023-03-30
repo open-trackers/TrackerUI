@@ -39,10 +39,11 @@ public struct FormColorPicker: View {
                 }
             #endif
             Divider()
-            Button(action: { color = .clear }) {
-                Image(systemName: "xmark.circle.fill")
-                    .symbolRenderingMode(.hierarchical)
-            }
+            Image(systemName: "xmark.circle.fill")
+                .symbolRenderingMode(.hierarchical)
+                .onTapGesture {
+                    color = .clear
+                }
         }
     }
 }
