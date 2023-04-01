@@ -22,14 +22,17 @@ public struct AddElementButton<Element>: View
     // MARK: - Parameters
 
     private let elementName: String
+    private let onLongPress: (() -> Void)?
     private let onCreate: () -> Element
     private let onAfterSave: (Element) -> Void
 
     public init(elementName: String,
+                onLongPress: (() -> Void)? = nil,
                 onCreate: @escaping () -> Element,
                 onAfterSave: @escaping (Element) -> Void)
     {
         self.elementName = elementName
+        self.onLongPress = onLongPress
         self.onCreate = onCreate
         self.onAfterSave = onAfterSave
     }
@@ -42,13 +45,39 @@ public struct AddElementButton<Element>: View
     // MARK: - Views
 
     public var body: some View {
-        Button(action: addAction) {
-            #if os(watchOS)
-                Label("Add \(elementName)", systemImage: "plus.circle")
-            #elseif os(iOS)
-                Text("Add \(elementName)")
-            #endif
+        if onLongPress != nil {
+            longPressButton
+        } else {
+            normalButton
         }
+    }
+
+    private var label: some View {
+        #if os(watchOS)
+            Label("Add \(elementName)", systemImage: "plus.circle")
+        #elseif os(iOS)
+            Text("Add \(elementName)")
+        #endif
+    }
+
+    private var normalButton: some View {
+        Button(action: addAction, label: { label })
+    }
+
+    private var longPressButton: some View {
+        Button(action: {}, label: { label })
+            .simultaneousGesture(
+                LongPressGesture()
+                    .onEnded { _ in
+                        onLongPress?()
+                    }
+            )
+            .highPriorityGesture(
+                TapGesture()
+                    .onEnded { _ in
+                        addAction()
+                    }
+            )
     }
 
     // MARK: - Properties
