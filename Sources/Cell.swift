@@ -29,7 +29,8 @@ public struct Cell<Element, Subtitle>: View
 
     // MARK: - Parameters
 
-    private let element: Element
+    // NOTE: needs to be an @ObservedObject for color to be reflected
+    @ObservedObject private var element: Element
     private let statusImageName: String?
     @Binding private var now: Date
     private let defaultImageName: String
