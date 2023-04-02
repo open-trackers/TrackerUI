@@ -101,9 +101,11 @@ public struct CellList<Element, Cell, Add, ButtonArray>: View
             }
         }
         #endif
-        .confirmationDialog("Are you sure?",
-                            isPresented: $confirmDelete,
-                            actions: confirmedDelete)
+        // NOTE: using an alert, as confirmationDialog may be clipped at top of view on iPad
+        // .confirmationDialog(
+        .alert("Are you sure?",
+               isPresented: $confirmDelete,
+               actions: confirmedDelete)
         .onReceive(timer) { _ in
             now = Date.now
         }

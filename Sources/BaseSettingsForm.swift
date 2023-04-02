@@ -61,14 +61,16 @@ public struct BaseSettingsForm<Content: View>: View {
         #endif
         .onDisappear(perform: disappearAction)
         .navigationTitle("Settings")
-        .confirmationDialog("",
-                            isPresented: $showRestoreDialog,
-                            actions: {
-                                Button("Restore", role: .destructive, action: restoreAction)
-                            },
-                            message: {
-                                Text("Restore to default settings?")
-                            })
+        // NOTE: using an alert, as confirmationDialog may be clipped at top of view on iPad
+        // .confirmationDialog(
+        .alert("",
+               isPresented: $showRestoreDialog,
+               actions: {
+                   Button("Restore", role: .destructive, action: restoreAction)
+               },
+               message: {
+                   Text("Restore to default settings?")
+               })
     }
 
     private var restoreButton: some View {
