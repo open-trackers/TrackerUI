@@ -78,7 +78,7 @@ public struct Cell<Element, Subtitle>: View
             .foregroundColor(cellForeground)
         }
         #if os(watchOS)
-        .listItemTint(backgroundTint)
+        .listItemTint(cellTint)
         #elseif os(iOS)
         .listRowBackground(cellBackground)
         #endif
@@ -138,6 +138,18 @@ public struct Cell<Element, Subtitle>: View
             .truncationMode(.middle)
     }
 
+    #if os(watchOS)
+        private var cellTint: Color {
+            netColor.opacity(opacity)
+        }
+    #endif
+
+    #if os(iOS)
+        private var cellBackground: some View {
+            CellBackground(color: netColor)
+        }
+    #endif
+
     private var cellForeground: Color {
         .primary.opacity(colorScheme == .light ? 0.6 : 0.8)
     }
@@ -146,36 +158,19 @@ public struct Cell<Element, Subtitle>: View
         ![Color.black, Color.clear].contains(color)
     }
 
-    private var opacities: (Double, Double) {
+    private var opacity: Double {
         if isThemed {
             if colorScheme == .light {
-                return (0.5, 0.7)
+                return 0.5
             }
-            return (0.4, 0.6)
+            return 0.4
         }
-        return (0.1, 0.2)
+        return 0.1
     }
 
     private var netColor: Color {
         isThemed ? color : Color.accentColor
     }
-
-    #if os(watchOS)
-        private var backgroundTint: Color {
-            netColor.opacity(opacities.0)
-        }
-    #endif
-
-    #if os(iOS)
-        private var cellBackground: some View {
-            LinearGradient(gradient: .init(colors: [
-                netColor.opacity(opacities.0),
-                netColor.opacity(opacities.1),
-            ]),
-            startPoint: .topLeading,
-            endPoint: .bottom)
-        }
-    #endif
 
     // MARK: - Actions
 
