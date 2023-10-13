@@ -147,24 +147,22 @@ private struct PadSheet<T, Footer: View>: View where T: Comparable {
 
     #if os(watchOS)
         private var platformView: some View {
-            GeometryReader { _ in
-                VStack(spacing: 3) {
-                    Text("\(config.stringValue)")
-                        .foregroundColor(darkTitleColor)
-                    NumberPad(config: config) { _, _ in
-                        Haptics.play()
-                    }
-                    .buttonStyle(.plain)
-                    .modify {
-                        if #available(iOS 16.1, watchOS 9.1, *) {
-                            $0.fontDesign(.monospaced)
-                        } else {
-                            $0.monospaced()
-                        }
+            VStack(spacing: 3) {
+                Text("\(config.stringValue)")
+                    .foregroundColor(darkTitleColor)
+                NumberPad(config: config) { _, _ in
+                    Haptics.play()
+                }
+                .buttonStyle(.plain)
+                .modify {
+                    if #available(iOS 16.1, watchOS 9.1, *) {
+                        $0.fontDesign(.monospaced)
+                    } else {
+                        $0.monospaced()
                     }
                 }
-                .font(.title2)
             }
+            .font(.title2)
             .ignoresSafeArea(.all, edges: [.bottom])
         }
     #endif
