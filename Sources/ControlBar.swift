@@ -46,7 +46,7 @@ public struct ControlBar<T>: View
             Button(action: tapAction) {
                 Text("\(selection.rawValue)/\(last.rawValue)")
                     .lineLimit(1)
-//                .truncationMode(.middle)
+                    .truncationMode(.tail)
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1.5)
                     .modify {
