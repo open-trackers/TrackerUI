@@ -24,16 +24,14 @@ public struct ElapsedTimeText: View {
         self.elapsedSecs = elapsedSecs
         self.timeElapsedFormat = timeElapsedFormat
 
-        let compactorStyle: TimeCompactor.Style = {
-            switch timeElapsedFormat {
-            case .hh_mm:
-                return .short
-            case .hh_mm_ss:
-                return .medium
-            case .mm_ss:
-                return .short
-            }
-        }()
+        let compactorStyle: TimeCompactor.Style = switch timeElapsedFormat {
+        case .hh_mm:
+            .short
+        case .hh_mm_ss:
+            .medium
+        case .mm_ss:
+            .short
+        }
 
         tc = TimeCompactor(ifZero: "", style: compactorStyle, roundSmallToWhole: false)
     }

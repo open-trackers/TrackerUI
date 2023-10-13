@@ -1,5 +1,5 @@
 //
-//  BarTabView.swift
+//  ControlBarTabView.swift
 //
 // Copyright 2023  OpenAlloc LLC
 //

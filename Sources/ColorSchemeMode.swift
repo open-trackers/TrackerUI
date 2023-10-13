@@ -18,22 +18,22 @@ public enum ColorSchemeMode: Int, CaseIterable {
     public var description: String {
         switch self {
         case .automatic:
-            return "Auto"
+            "Auto"
         case .light:
-            return "Light"
+            "Light"
         case .dark:
-            return "Dark"
+            "Dark"
         }
     }
 
     public var colorScheme: ColorScheme? {
         switch self {
         case .automatic:
-            return nil
+            nil
         case .light:
-            return .light
+            .light
         case .dark:
-            return .dark
+            .dark
         }
     }
 }
