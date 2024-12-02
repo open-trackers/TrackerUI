@@ -13,7 +13,7 @@ import SwiftUI
 import TrackerLib
 
 public struct ValueStepper<T>: View
-    where T: Numeric & Comparable & _FormatSpecifiable & Strideable
+where T: Numeric & Comparable & Strideable
 {
     // MARK: - Parameters
 
@@ -81,7 +81,9 @@ public struct ValueStepper<T>: View
             Text(ifZero)
                 .padding(.horizontal)
         } else {
-            Text("\(value * multiplier, specifier: specifier)")
+            let n = value * multiplier
+            let s = String(format: specifier, n as! CVarArg)
+            Text(s)
         }
     }
 }

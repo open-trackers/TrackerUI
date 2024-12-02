@@ -17,7 +17,7 @@ public extension Notification.Name {
     static let trackerPopNavStack = Notification.Name("tracker-pop-nav-stack") // payload of stackIdentifier String
 }
 
-extension BaseCoreDataStack: ObservableObject {}
+//extension BaseCoreDataStack: ObservableObject {}
 
 public struct BaseNavStack<Destination, Content, MyRoute>: View
     where Destination: View, Content: View, MyRoute: Hashable & Codable
